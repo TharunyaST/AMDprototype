@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Intelligent Document Management</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --teal: #00e5cc;
+            --teal-glow: rgba(0, 229, 204, 0.35);
+            --blue: #003580;
+            --indigo: #0a0f2e;
+            --text: #ffffff;
+            --muted: rgba(255, 255, 255, 0.55);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #050d1f;
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ── CANVAS ─────────────────────── */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        /* ── CONTENT LAYER ──────────────── */
+        .scene {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            perspective: 1200px;
+        }
+
+        /* gradient vignette */
+        .scene::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(5, 13, 31, 0.75) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── BADGE ──────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(0, 229, 204, 0.1);
+            border: 1px solid rgba(0, 229, 204, 0.3);
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--teal);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            animation: fadeDown 0.8s ease both;
+            animation-delay: 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 8px var(--teal);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(1.4);
+            }
+        }
+
+        /* ── MAIN HEADLINE ──────────────── */
+        .headline {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeDown 0.9s ease both;
+            animation-delay: 0.35s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .headline h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(38px, 7vw, 80px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 45%, #00e5cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+
+        .headline h1 span {
+            background: linear-gradient(135deg, #00e5cc, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── SUB TEXT ───────────────────── */
+        .subtext {
+            text-align: center;
+            font-size: clamp(14px, 2vw, 18px);
+            color: var(--muted);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 44px;
+            animation: fadeDown 1s ease both;
+            animation-delay: 0.5s;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── FEATURE CARDS (3D hover) ───── */
+        .feat-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeUp 1.1s ease both;
+            animation-delay: 0.65s;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feat-card {
+            width: 148px;
+            padding: 22px 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            text-align: center;
+            cursor: default;
+            transition: transform 0.4s cubic-bezier(.22, .68, 0, 1.2), box-shadow 0.4s ease, border-color 0.3s;
+            transform-style: preserve-3d;
+            backdrop-filter: blur(12px);
+        }
+
+        .feat-card:hover {
+            transform: translateY(-10px) rotateX(8deg) scale(1.04);
+            box-shadow: 0 24px 60px rgba(0, 229, 204, 0.18), 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-color: rgba(0, 229, 204, 0.3);
+        }
+
+        .feat-card .icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .feat-card:hover .icon {
+            transform: translateZ(20px) scale(1.2);
+        }
+
+        .feat-card .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.4;
+        }
+
+        /* ── CTA BUTTON ─────────────────── */
+        .cta-wrap {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            animation: fadeUp 1.2s ease both;
+            animation-delay: 0.8s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-primary {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #00e5cc 0%, #0097a7 100%);
+            border: none;
+            border-radius: 999px;
+            color: #001a2c;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 0 var(--teal-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+            border-radius: inherit;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 0 0 12px rgba(0, 229, 204, 0.08), 0 16px 40px rgba(0, 229, 204, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-ghost {
+            padding: 14px 28px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ── STATS STRIP ────────────────── */
+        .stats-strip {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            z-index: 10;
+            animation: fadeUp 1.3s ease both;
+            animation-delay: 1s;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--teal);
+            text-shadow: 0 0 20px var(--teal-glow);
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── TOP CORNER LOGO ────────────── */
+        .logo-corner {
+            position: fixed;
+            top: 28px;
+            left: 36px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 20;
+            animation: fadeDown 0.7s ease both;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #00e5cc, #003580);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 20px rgba(0, 229, 204, 0.3);
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── GRID NAV TOP-RIGHT ─────────── */
+        .nav-corner {
+            position: fixed;
+            top: 28px;
+            right: 36px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            animation: fadeDown 0.7s ease both;
+            animation-delay: 0.1s;
+        }
+
+        /* ── KEYFRAMES ──────────────────── */
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── RIPPLE RING ────────────────── */
+        .ring-wrap {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 229, 204, 0.07);
+            animation: expandRing 6s linear infinite;
+        }
+
+        .ring:nth-child(2) {
+            animation-delay: 2s;
+        }
+
+        .ring:nth-child(3) {
+            animation-delay: 4s;
+        }
+
+        @keyframes expandRing {
+            from {
+                width: 200px;
+                height: 200px;
+                opacity: 0.6;
+            }
+
+            to {
+                width: 900px;
+                height: 900px;
+                opacity: 0;
+            }
+        }
+
+        /* ── TRANSITION OVERLAY ─────────── */
+        .transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: #050d1f;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.7s ease;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- animated WebGL canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- ripple rings -->
+    <div class="ring-wrap">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+    </div>
+
+    <!-- top-left logo -->
+    <div class="logo-corner">
+        <div class="logo-icon">🗂️</div>
+        <div class="logo-text">
+            AI — DMS
+            <span>Document Management System</span>
+        </div>
+    </div>
+
+    <!-- top-right nav -->
+    <div class="nav-corner">
+        <button class="btn-ghost" onclick="goLogin()" style="padding:9px 20px;font-size:13px">Sign In</button>
+    </div>
+
+    <!-- main content -->
+    <div class="scene">
+        <div class="badge">
+            <span class="badge-dot"></span>
+            AI-Powered · Cloud-Integrated · Audit-Ready
+        </div>
+
+        <div class="headline">
+            <h1>Smarter Documents.<br><span>Faster Decisions.</span></h1>
+        </div>
+
+        <p class="subtext">
+            An intelligent document management system that automates classification, OCR, approvals and search —
+            slashing manual paperwork by <strong style="color:#00e5cc">60%+</strong>.
+        </p>
+
+        <div class="feat-row">
+            <div class="feat-card">
+                <span class="icon">🤖</span>
+                <div class="label">AI Auto Classification</div>
+            </div>
+            <div class="feat-card">
+                <span class="icon">🔍</span>
+                <div class="label">OCR + NLP Search</div>
+            </div>
+            <div class="feat-card">
+                <span class="icon">🔐</span>
+                <div class="label">Role-Based Access</div>
+            </div>
+            <div class="feat-card">
+                <span class="icon">⚡</span>
+                <div class="label">Live Approval Workflows</div>
+            </div>
+            <div class="feat-card">
+                <span class="icon">☁️</span>
+                <div class="label">Cloud-Ready</div>
+            </div>
+        </div>
+
+        <div class="cta-wrap">
+            <button class="btn-primary" onclick="goLogin()">🚀 Get Started</button>
+            <button class="btn-ghost" onclick="goLogin()">Learn More →</button>
+        </div>
+    </div>
+
+    <!-- stats at bottom -->
+    <div class="stats-strip">
+        <div class="stat">
+            <div class="stat-num" id="s1">0%</div>
+            <div class="stat-lbl">Less Paperwork</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num" id="s2">0</div>
+            <div class="stat-lbl">Departments</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num" id="s3">0K+</div>
+            <div class="stat-lbl">Docs Indexed</div>
+        </div>
+    </div>
+
+    <!-- transition overlay -->
+    <div class="transition-overlay" id="overlay"></div>
+
+    <script>
+        /* ─── THREE.JS-style WebGL Particle Field ─── */
+        (function () {
+            const canvas = document.getElementById('bg-canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+            if (!gl) {
+                // fallback: CSS only
+                canvas.style.background = 'radial-gradient(ellipse at 30% 40%, #001838 0%, #050d1f 70%)';
+                return;
+            }
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            // Vertex shader
+            const vs = `
+    attribute vec3 pos;
+    attribute float size;
+    attribute float alpha;
+    uniform float time;
+    uniform vec2 res;
+    varying float vAlpha;
+    void main() {
+      vAlpha = alpha;
+      vec3 p = pos;
+      p.x += sin(time * 0.3 + pos.y * 2.0) * 0.04;
+      p.y += cos(time * 0.2 + pos.x * 1.5) * 0.04;
+      gl_Position = vec4(p, 1.0);
+      gl_PointSize = size * (res.y / 800.0);
+    }
+  `;
+
+            // Fragment shader
+            const fs = `
+    precision mediump float;
+    varying float vAlpha;
+    uniform vec3 color;
+    void main() {
+      float d = distance(gl_PointCoord, vec2(0.5));
+      if (d > 0.5) discard;
+      float fade = 1.0 - smoothstep(0.3, 0.5, d);
+      gl_FragColor = vec4(color, vAlpha * fade);
+    }
+  `;
+
+            function compile(type, src) {
+                const s = gl.createShader(type);
+                gl.shaderSource(s, src);
+                gl.compileShader(s);
+                return s;
+            }
+
+            const prog = gl.createProgram();
+            gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+            gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+            gl.linkProgram(prog);
+            gl.useProgram(prog);
+
+            const N = 320;
+            const positions = new Float32Array(N * 3);
+            const sizes = new Float32Array(N);
+            const alphas = new Float32Array(N);
+            const speeds = new Float32Array(N);
+
+            for (let i = 0; i < N; i++) {
+                positions[i * 3] = Math.random() * 2 - 1;
+                positions[i * 3 + 1] = Math.random() * 2 - 1;
+                positions[i * 3 + 2] = 0;
+                sizes[i] = Math.random() * 3.5 + 1.0;
+                alphas[i] = Math.random() * 0.6 + 0.1;
+                speeds[i] = Math.random() * 0.4 + 0.1;
+            }
+
+            function makeBuf(data) {
+                const b = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, b);
+                gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+                return b;
+            }
+
+            const posBuf = makeBuf(positions);
+            const sizeBuf = makeBuf(sizes);
+            const alphaBuf = makeBuf(alphas);
+
+            function bindAttr(name, buf, size) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+                const loc = gl.getAttribLocation(prog, name);
+                gl.enableVertexAttribArray(loc);
+                gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+            }
+
+            bindAttr('pos', posBuf, 3);
+            bindAttr('size', sizeBuf, 1);
+            bindAttr('alpha', alphaBuf, 1);
+
+            const uTime = gl.getUniformLocation(prog, 'time');
+            const uRes = gl.getUniformLocation(prog, 'res');
+            const uColor = gl.getUniformLocation(prog, 'color');
+
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+            // mouse parallax
+            let mx = 0, my = 0;
+            document.addEventListener('mousemove', e => {
+                mx = (e.clientX / window.innerWidth - 0.5) * 0.06;
+                my = (e.clientY / window.innerHeight - 0.5) * 0.06;
+            });
+
+            let t = 0;
+            function draw() {
+                t += 0.008;
+                gl.clearColor(0.02, 0.05, 0.12, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+
+                // Teal particles
+                gl.uniform1f(uTime, t + mx);
+                gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.uniform3f(uColor, 0.0, 0.9, 0.8);
+                gl.drawArrays(gl.POINTS, 0, N);
+
+                // Blue accent particles (offset time)
+                gl.uniform1f(uTime, t * 0.6 + my * 2);
+                gl.uniform3f(uColor, 0.2, 0.5, 1.0);
+                gl.drawArrays(gl.POINTS, 0, N / 2);
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        /* ─── Animated counters ─── */
+        function animCount(el, end, suffix, duration) {
+            let start = 0;
+            const step = end / (duration / 16);
+            const timer = setInterval(() => {
+                start = Math.min(start + step, end);
+                el.textContent = Math.floor(start) + suffix;
+                if (start >= end) clearInterval(timer);
+            }, 16);
+        }
+
+        setTimeout(() => {
+            animCount(document.getElementById('s1'), 60, '%+', 1800);
+            animCount(document.getElementById('s2'), 12, '', 1600);
+            animCount(document.getElementById('s3'), 50, 'K+', 2000);
+        }, 1000);
+
+        /* ─── 3D card tilt on mouse ─── */
+        document.querySelectorAll('.feat-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                card.style.transform = `perspective(600px) rotateX(${-y * 18}deg) rotateY(${x * 18}deg) translateY(-10px) scale(1.05)`;
+                card.style.boxShadow = `${-x * 20}px ${-y * 20}px 40px rgba(0,229,204,0.15)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            });
+        });
+
+        /* ─── Navigation ─── */
+        function goLogin() {
+            document.getElementById('overlay').classList.add('active');
+            setTimeout(() => { window.location.href = 'index.html'; }, 700);
+        }
+    </script>
+</body>
+
+</html>

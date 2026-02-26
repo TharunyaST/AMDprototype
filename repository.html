@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Document Repository</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-bar .form-select {
+            width: 160px;
+        }
+
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .doc-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-card:hover {
+            border-color: var(--metro-teal);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .doc-card.pdf::before {
+            background: #e53935;
+        }
+
+        .doc-card.docx::before {
+            background: #1565c0;
+        }
+
+        .doc-card.xlsx::before {
+            background: #2e7d32;
+        }
+
+        .doc-card.img::before {
+            background: #f57c00;
+        }
+
+        .doc-icon {
+            font-size: 32px;
+        }
+
+        .doc-name {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .doc-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .doc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-top: 2px;
+        }
+
+        .doc-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .doc-actions button {
+            flex: 1;
+            padding: 5px;
+            font-size: 10px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .doc-actions button:hover {
+            border-color: var(--metro-teal);
+            color: var(--metro-teal);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 6px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            border-color: var(--metro-teal);
+            color: var(--metro-teal);
+            background: rgba(0, 191, 165, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item active" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                </div>
+
+                <a href="index.html" class="btn"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
+                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
+                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">🗄️ Document Repository</span>
+                <div class="topbar-search">
+                    <span>🔍</span><input placeholder="Search repository…" id="repo-search" oninput="filterDocs()">
+                </div>
+                <div class="topbar-actions">
+                    <a href="upload.html" class="btn btn-primary btn-sm">+ Upload</a>
+                    <div class="icon-btn" onclick="window.location='workflow.html'">🔔<div class="badge-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>Centralized Document Repository</h1>
+                    <p>AI-indexed and auto-classified archive of all metro documents</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Docs</div>
+                        <div class="stat-value text-teal" data-count="52480">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Departments</div>
+                        <div class="stat-value" data-count="12">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">This Month</div>
+                        <div class="stat-value" data-count="2840">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">AI Tagged</div>
+                        <div class="stat-value" data-count="51200">0</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <select class="form-select" onchange="filterDocs()" id="dept-filter">
+                        <option value="">All Departments</option>
+                        <option>Operations</option>
+                        <option>Engineering</option>
+                        <option>Finance</option>
+                        <option>Safety</option>
+                        <option>HR</option>
+                        <option>Procurement</option>
+                        <option>IT</option>
+                        <option>Legal</option>
+                    </select>
+                    <select class="form-select" onchange="filterDocs()" id="type-filter">
+                        <option value="">All Types</option>
+                        <option>PDF</option>
+                        <option>DOCX</option>
+                        <option>XLSX</option>
+                        <option>Image</option>
+                    </select>
+                    <select class="form-select">
+                        <option>Sort: Newest First</option>
+                        <option>Sort: Oldest First</option>
+                        <option>Sort: Name A-Z</option>
+                        <option>Sort: Size</option>
+                    </select>
+                    <div class="view-toggle" style="margin-left:auto">
+                        <button class="view-btn active" onclick="setView('grid',this)">⊞</button>
+                        <button class="view-btn" onclick="setView('list',this)">☰</button>
+                    </div>
+                </div>
+
+                <!-- Category Chips -->
+                <div class="tag-cloud mb-24">
+                    <span class="chip" onclick="quickFilter('safety')">🛡️ Safety</span>
+                    <span class="chip chip-blue" onclick="quickFilter('operations')">⚙️ Operations</span>
+                    <span class="chip chip-orange" onclick="quickFilter('procurement')">📦 Procurement</span>
+                    <span class="chip chip-purple" onclick="quickFilter('finance')">💰 Finance</span>
+                    <span class="chip" onclick="quickFilter('hr')">👥 HR</span>
+                    <span class="chip chip-blue" onclick="quickFilter('engineering')">🏗️ Engineering</span>
+                    <span class="chip chip-orange" onclick="quickFilter('legal')">⚖️ Legal</span>
+                    <span class="chip chip-purple" onclick="quickFilter('it')">💻 IT</span>
+                </div>
+
+                <!-- Document Cards -->
+                <div class="doc-grid" id="doc-grid"></div>
+
+                <!-- Pagination -->
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px">
+                    <span style="font-size:13px;color:var(--text-muted)">Showing 20 of 52,480 documents</span>
+                    <div style="display:flex;gap:6px">
+                        <button class="btn btn-secondary btn-sm">← Prev</button>
+                        <button class="btn btn-primary btn-sm">1</button>
+                        <button class="btn btn-secondary btn-sm">2</button>
+                        <button class="btn btn-secondary btn-sm">3</button>
+                        <button class="btn btn-secondary btn-sm">Next →</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="preview-title">Document Preview</h2>
+                <span class="modal-close" onclick="closeModal('preview-modal')">✕</span>
+            </div>
+            <div id="preview-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const DOCS = [
+            { name: 'Safety_Inspection_Report_Q4_2024.pdf', dept: 'Safety', type: 'pdf', size: '2.4 MB', date: '2024-12-15', author: 'Rajesh Kumar', tags: ['safety', 'inspection', 'annual'], ai: 'Safety Report' },
+            { name: 'Procurement_Tender_RollingStock_2025.docx', dept: 'Procurement', type: 'docx', size: '890 KB', date: '2025-01-08', author: 'Priya Menon', tags: ['tender', 'rolling stock'], ai: 'Procurement Tender' },
+            { name: 'Station_Maintenance_SOP_Q3.pdf', dept: 'Operations', type: 'pdf', size: '1.1 MB', date: '2024-09-20', author: 'Arun Das', tags: ['maintenance', 'SOP'], ai: 'Operations Manual' },
+            { name: 'HR_Leave_Policy_Circular_2025.pdf', dept: 'HR', type: 'pdf', size: '450 KB', date: '2025-02-01', author: 'Divya Nair', tags: ['HR', 'leave', 'policy'], ai: 'Policy Document' },
+            { name: 'Revenue_Audit_Jan2025.xlsx', dept: 'Finance', type: 'xlsx', size: '3.2 MB', date: '2025-01-31', author: 'Suresh Pillai', tags: ['audit', 'revenue'], ai: 'Financial Report' },
+            { name: 'Signalling_Upgrade_Proposal.pdf', dept: 'Engineering', type: 'pdf', size: '5.6 MB', date: '2025-01-22', author: 'Meera Krishnan', tags: ['signalling', 'engineering'], ai: 'Technical Proposal' },
+            { name: 'Grievance_Report_Q4_2024.pdf', dept: 'Customer Service', type: 'pdf', size: '780 KB', date: '2025-01-10', author: 'Thomas George', tags: ['grievance', 'Q4'], ai: 'Service Report' },
+            { name: 'IT_Security_Policy_2025.pdf', dept: 'IT', type: 'pdf', size: '1.8 MB', date: '2025-01-05', author: 'Ananya Raj', tags: ['security', 'policy', 'IT'], ai: 'IT Policy' },
+            { name: 'Contract_Station_Cleaning.docx', dept: 'Legal', type: 'docx', size: '620 KB', date: '2024-12-20', author: 'Vikram Nair', tags: ['contract', 'legal'], ai: 'Legal Contract' },
+            { name: 'Monthly_Ridership_Feb2025.xlsx', dept: 'Operations', type: 'xlsx', size: '2.1 MB', date: '2025-02-15', author: 'Arun Das', tags: ['ridership', 'monthly'], ai: 'Operations Report' },
+            { name: 'Emergency_Response_Plan.pdf', dept: 'Safety', type: 'pdf', size: '4.3 MB', date: '2024-11-30', author: 'Rajesh Kumar', tags: ['emergency', 'safety', 'plan'], ai: 'Safety Protocol' },
+            { name: 'Employee_Handbook_2025.pdf', dept: 'HR', type: 'pdf', size: '2.8 MB', date: '2025-01-01', author: 'Divya Nair', tags: ['handbook', 'HR'], ai: 'HR Document' },
+            { name: 'Platform_Scan_Gate4_North.png', dept: 'Engineering', type: 'img', size: '8.4 MB', date: '2025-02-10', author: 'Meera Krishnan', tags: ['scan', 'platform', 'OCR'], ai: 'Scanned Image' },
+            { name: 'Annual_Budget_FY2025.xlsx', dept: 'Finance', type: 'xlsx', size: '4.1 MB', date: '2025-01-15', author: 'Suresh Pillai', tags: ['budget', 'annual', 'finance'], ai: 'Financial Plan' },
+            { name: 'Legal_Land_Acquisition_Notice.pdf', dept: 'Legal', type: 'pdf', size: '1.5 MB', date: '2024-12-05', author: 'Vikram Nair', tags: ['legal', 'land', 'notice'], ai: 'Legal Notice' },
+            { name: 'IT_Infra_Upgrade_Plan_2025.docx', dept: 'IT', type: 'docx', size: '920 KB', date: '2025-02-02', author: 'Ananya Raj', tags: ['IT', 'infrastructure', 'upgrade'], ai: 'IT Plan' },
+            { name: 'Procurement_Civil_Works_Q1.pdf', dept: 'Procurement', type: 'pdf', size: '3.7 MB', date: '2025-02-08', author: 'Priya Menon', tags: ['civil', 'procurement', 'Q1'], ai: 'Procurement Report' },
+            { name: 'Train_Schedule_March2025.xlsx', dept: 'Operations', type: 'xlsx', size: '1.3 MB', date: '2025-02-20', author: 'Arun Das', tags: ['schedule', 'train', 'March'], ai: 'Operations Schedule' },
+            { name: 'Public_Comm_Press_Release.docx', dept: 'Customer Service', type: 'docx', size: '380 KB', date: '2025-02-14', author: 'Thomas George', tags: ['press', 'communication'], ai: 'Press Release' },
+            { name: 'Scanned_Invoice_Vendor_2025.png', dept: 'Finance', type: 'img', size: '5.2 MB', date: '2025-02-18', author: 'Suresh Pillai', tags: ['invoice', 'vendor', 'OCR'], ai: 'Financial Invoice' },
+        ];
+
+        const typeIcons = { pdf: '📄', docx: '📝', xlsx: '📊', img: '🖼️' };
+        const typeColors = { pdf: 'pdf', docx: 'docx', xlsx: 'xlsx', img: 'img' };
+
+        function renderDocs(docs) {
+            const grid = document.getElementById('doc-grid');
+            grid.innerHTML = '';
+            docs.forEach((doc, i) => {
+                const card = document.createElement('div');
+                card.className = `doc-card ${typeColors[doc.type]} fade-in`;
+                card.style.animationDelay = `${i * 0.04}s`;
+                card.innerHTML = `
+      <div class="doc-icon">${typeIcons[doc.type]}</div>
+      <div class="doc-name">${doc.name}</div>
+      <div class="doc-meta">${doc.dept} · ${doc.size} · ${doc.date}</div>
+      <div class="doc-meta">By: ${doc.author}</div>
+      <div class="ai-badge" style="margin-top:4px">✦ ${doc.ai}</div>
+      <div class="doc-tags">${doc.tags.map(t => `<span class="chip" style="font-size:9px;padding:2px 6px">${t}</span>`).join('')}</div>
+      <div class="doc-actions">
+        <button onclick="previewDoc('${doc.name}','${doc.dept}','${doc.author}','${doc.ai}','${doc.date}','${doc.type}')">👁 View</button>
+        <button>⬇ Download</button>
+        <button onclick="showToast('Share link copied!')">🔗 Share</button>
+      </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDocs() {
+            const q = document.getElementById('repo-search').value.toLowerCase();
+            const dept = document.getElementById('dept-filter').value;
+            const type = document.getElementById('type-filter').value.toLowerCase();
+            const filtered = DOCS.filter(d => {
+                const matchQ = !q || d.name.toLowerCase().includes(q) || d.tags.some(t => t.includes(q)) || d.dept.toLowerCase().includes(q);
+                const matchDept = !dept || d.dept === dept;
+                const matchType = !type || d.type === type.toLowerCase();
+                return matchQ && matchDept && matchType;
+            });
+            renderDocs(filtered);
+        }
+
+        function quickFilter(tag) {
+            document.getElementById('repo-search').value = tag;
+            filterDocs();
+        }
+
+        function setView(mode, btn) {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const grid = document.getElementById('doc-grid');
+            if (mode === 'list') {
+                grid.style.gridTemplateColumns = '1fr';
+            } else {
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(200px, 1fr))';
+            }
+        }
+
+        function previewDoc(name, dept, author, ai, date, type) {
+            document.getElementById('preview-title').textContent = name;
+            document.getElementById('preview-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="badge badge-teal">${type.toUpperCase()}</span>
+        <span class="badge badge-blue">${dept}</span>
+        <div class="ai-badge">✦ ${ai}</div>
+      </div>
+      <div class="ocr-panel">
+        📄 Document preview — AI-extracted content:<br><br>
+        This document has been automatically processed by the Kochi Metro AI-DMS.<br>
+        Department: ${dept}<br>
+        Classified: ${ai}<br>
+        Author: ${author}<br>
+        Date: ${date}<br><br>
+        [Full text content would display here after OCR processing...]
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-primary" onclick="showToast('Download started')">⬇ Download</button>
+        <button class="btn btn-secondary" onclick="showToast('Share link copied!')">🔗 Share</button>
+        <button class="btn btn-danger btn-sm" onclick="closeModal('preview-modal')">✕ Close</button>
+      </div>
+    </div>`;
+            openModal('preview-modal');
+        }
+
+        renderDocs(DOCS);
+    </script>
+</body>
+
+</html>

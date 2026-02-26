@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Access Control</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .user-table-row {
+            transition: var(--transition);
+        }
+
+        .perm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .access-log-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 12px;
+        }
+
+        .access-log-row:last-child {
+            border-bottom: none;
+        }
+
+        .log-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item active" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                </div>
+
+                <a href="index.html" class="btn"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
+                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
+                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">🔐 Role-Based Access Control</span>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="openModal('add-user-modal')">+ Add User</button>
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>Role-Based Access Control (RBAC)</h1>
+                    <p>Secure, granular permission management across all departments and roles</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value text-teal" data-count="284">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Sessions</div>
+                        <div class="stat-value text-success" data-count="38">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Access Violations</div>
+                        <div class="stat-value text-danger" data-count="2">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Access Req.</div>
+                        <div class="stat-value text-warning" data-count="7">0</div>
+                    </div>
+                </div>
+
+                <!-- Role Permission Cards -->
+                <div class="card mb-24">
+                    <div class="card-header">
+                        <div class="card-title">🏷️ Role Permissions Matrix</div>
+                        <div class="ai-badge">Policy v2.4</div>
+                    </div>
+                    <div class="perm-grid">
+                        <!-- Admin -->
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-icon" style="background:rgba(255,82,82,0.15);color:var(--danger)">🛡️
+                                </div>
+                                <div>
+                                    <div class="role-name">System Admin</div>
+                                    <div class="role-dept">IT Department</div>
+                                </div>
+                            </div>
+                            <div class="perm-list">
+                                <div class="perm-row"><span class="perm-name">Read All Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Upload Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Delete Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Manage Users</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Approve Workflow</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Export Reports</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- DGM -->
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-icon" style="background:rgba(0,191,165,0.15);color:var(--metro-teal)">
+                                    👔</div>
+                                <div>
+                                    <div class="role-name">Dept. Head / DGM</div>
+                                    <div class="role-dept">All Departments</div>
+                                </div>
+                            </div>
+                            <div class="perm-list">
+                                <div class="perm-row"><span class="perm-name">Read All Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Upload Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Delete Docs</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Manage Users</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Approve Workflow</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Export Reports</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Staff -->
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-icon" style="background:rgba(64,196,255,0.15);color:var(--info)">👤
+                                </div>
+                                <div>
+                                    <div class="role-name">General Staff</div>
+                                    <div class="role-dept">Own Department</div>
+                                </div>
+                            </div>
+                            <div class="perm-list">
+                                <div class="perm-row"><span class="perm-name">Read Own Dept</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Upload Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Delete Docs</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Manage Users</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Submit for Approval</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Export Reports</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Auditor -->
+                        <div class="role-card">
+                            <div class="role-header">
+                                <div class="role-icon"
+                                    style="background:rgba(255,213,79,0.15);color:var(--accent-gold)">🔍</div>
+                                <div>
+                                    <div class="role-name">Auditor / Viewer</div>
+                                    <div class="role-dept">Cross-Department</div>
+                                </div>
+                            </div>
+                            <div class="perm-list">
+                                <div class="perm-row"><span class="perm-name">Read All Docs</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Upload Docs</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Delete Docs</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Manage Users</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Approve Workflow</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="perm-row"><span class="perm-name">Export Reports</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- User Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">👥 User Management</div>
+                            <input class="form-input" placeholder="Search users…" style="width:180px"
+                                oninput="filterUsers(this.value)">
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Dept</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Access Logs -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">📜 Access Audit Log</div>
+                            <span class="badge badge-teal">Real-time</span>
+                        </div>
+                        <div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(0,230,118,0.1)">🟢</div>
+                                <div style="flex:1"><strong>Rajesh Kumar</strong> viewed Safety_Inspection_Q4.pdf</div>
+                                <div class="a-time">2m ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(0,191,165,0.1)">📤</div>
+                                <div style="flex:1"><strong>Priya Menon</strong> uploaded Tender_RollingStock.docx</div>
+                                <div class="a-time">15m ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(255,82,82,0.1)">🔴</div>
+                                <div style="flex:1"><strong>Intern_S.Babu</strong> access DENIED — Finance folder</div>
+                                <div class="a-time">31m ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(255,202,40,0.1)">🔓</div>
+                                <div style="flex:1"><strong>Admin</strong> revoked access for resigned employee</div>
+                                <div class="a-time">1h ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(64,196,255,0.1)">🔍</div>
+                                <div style="flex:1"><strong>Auditor_K.Nair</strong> exported Finance Q4 report</div>
+                                <div class="a-time">2h ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(0,230,118,0.1)">🟢</div>
+                                <div style="flex:1"><strong>Meera Krishnan</strong> approved Signalling_Upgrade.pdf
+                                </div>
+                                <div class="a-time">3h ago</div>
+                            </div>
+                            <div class="access-log-row">
+                                <div class="log-icon" style="background:rgba(255,82,82,0.1)">🔴</div>
+                                <div style="flex:1"><strong>Unknown IP</strong> — Login failed (3 attempts)</div>
+                                <div class="a-time">4h ago</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:14px;display:flex;gap:8px">
+                            <button class="btn btn-secondary btn-sm" onclick="showToast('Access log exported!')">📥
+                                Export Log</button>
+                            <button class="btn btn-ghost btn-sm" onclick="showToast('Full audit trail opened')">View All
+                                →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal-overlay" id="add-user-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>+ Add New User</h2>
+                <span class="modal-close" onclick="closeModal('add-user-modal')">✕</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Employee ID</label>
+                <input class="form-input" placeholder="KMRL-EMP-0284" id="new-emp-id">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input class="form-input" placeholder="Employee Full Name" id="new-emp-name">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="new-emp-role">
+                        <option>General Staff</option>
+                        <option>Dept. Head / DGM</option>
+                        <option>Auditor / Viewer</option>
+                        <option>System Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <select class="form-select" id="new-emp-dept">
+                        <option>Operations</option>
+                        <option>Engineering</option>
+                        <option>Finance</option>
+                        <option>Safety</option>
+                        <option>HR</option>
+                        <option>Procurement</option>
+                        <option>IT</option>
+                        <option>Legal</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addUser()">✅ Grant Access</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const USERS = [
+            { id: 'KM-001', name: 'Rajesh Kumar', role: 'Dept. Head', dept: 'Safety', status: 'Active' },
+            { id: 'KM-002', name: 'Priya Menon', role: 'General Staff', dept: 'Procurement', status: 'Active' },
+            { id: 'KM-003', name: 'Arun Das', role: 'General Staff', dept: 'Operations', status: 'Active' },
+            { id: 'KM-004', name: 'Divya Nair', role: 'Dept. Head', dept: 'HR', status: 'Active' },
+            { id: 'KM-005', name: 'Suresh Pillai', role: 'General Staff', dept: 'Finance', status: 'Active' },
+            { id: 'KM-006', name: 'Meera Krishnan', role: 'Dept. Head', dept: 'Engineering', status: 'Active' },
+            { id: 'KM-007', name: 'Ananya Raj', role: 'System Admin', dept: 'IT', status: 'Active' },
+            { id: 'KM-008', name: 'Vikram Nair', role: 'Dept. Head', dept: 'Legal', status: 'Active' },
+            { id: 'KM-009', name: 'Thomas George', role: 'General Staff', dept: 'Customer Service', status: 'Inactive' },
+            { id: 'KM-010', name: 'Intern_S.Babu', role: 'Viewer', dept: 'Finance', status: 'Restricted' },
+        ];
+
+        const roleColors = { 'System Admin': 'badge-red', 'Dept. Head': 'badge-teal', 'General Staff': 'badge-blue', 'Viewer': 'badge-gold', 'Auditor / Viewer': 'badge-gold' };
+        const statusColors = { 'Active': 'badge-green', 'Inactive': 'badge-orange', 'Restricted': 'badge-red' };
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('user-tbody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = 'user-table-row';
+                tr.innerHTML = `<td><strong>${u.name}</strong><div style="font-size:10px;color:var(--text-muted)">${u.id}</div></td>
+      <td><span class="badge ${roleColors[u.role] || 'badge-blue'}">${u.role}</span></td>
+      <td style="font-size:12px">${u.dept}</td>
+      <td><span class="badge ${statusColors[u.status]}">${u.status}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Edit panel opened for ${u.name}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="revokeUser(this,'${u.name}')">🚫</button>
+        </div>
+      </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+        function filterUsers(q) {
+            renderUsers(USERS.filter(u => u.name.toLowerCase().includes(q.toLowerCase()) || u.dept.toLowerCase().includes(q.toLowerCase())));
+        }
+        function revokeUser(btn, name) {
+            const row = btn.closest('tr');
+            row.style.opacity = '0.4';
+            row.lastElementChild.innerHTML = '<span class="badge badge-red">Revoked</span>';
+            showToast(`Access revoked for ${name}`);
+        }
+        function addUser() {
+            const name = document.getElementById('new-emp-name').value;
+            const role = document.getElementById('new-emp-role').value;
+            const dept = document.getElementById('new-emp-dept').value;
+            const id = document.getElementById('new-emp-id').value || 'KM-NEW';
+            if (!name) { showToast('Enter employee name', 'error'); return; }
+            USERS.push({ id, name, role, dept, status: 'Active' });
+            renderUsers(USERS);
+            closeModal('add-user-modal');
+            showToast(`${name} added with ${role} permissions`);
+        }
+        renderUsers(USERS);
+    </script>
+</body>
+
+</html>

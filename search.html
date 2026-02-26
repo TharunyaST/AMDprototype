@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Smart Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .search-hero {
+            text-align: center;
+            padding: 40px 0 32px;
+            position: relative;
+        }
+
+        .search-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .search-hero p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
+        .main-search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(10, 32, 64, 0.9);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 14px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+        }
+
+        .main-search-box:focus-within {
+            border-color: var(--metro-teal);
+            box-shadow: 0 0 0 4px rgba(0, 191, 165, 0.12), var(--shadow-hover);
+        }
+
+        .main-search-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .main-search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--metro-teal), #0097a7);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: #fff;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(0, 191, 165, 0.4);
+        }
+
+        .query-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .q-example {
+            padding: 5px 14px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .q-example:hover {
+            border-color: var(--metro-teal);
+            color: var(--metro-teal);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .filter-row .form-select {
+            width: 150px;
+        }
+
+        .result-stats {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .result-stats strong {
+            color: var(--metro-teal);
+        }
+
+        .nlp-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: rgba(179, 136, 255, 0.12);
+            color: #b388ff;
+            border: 1px solid rgba(179, 136, 255, 0.25);
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item active" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                </div>
+
+                <a href="index.html" class="btn"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
+                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
+                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">🔍 Smart Search Engine</span>
+                <div class="topbar-actions">
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+
+                <!-- Hero Search -->
+                <div class="search-hero">
+                    <div class="ai-badge" style="margin-bottom:12px">✦ NLP-Powered Natural Language Search</div>
+                    <h1>Find any document.<br>Ask in plain English.</h1>
+                    <p>Search 52,000+ documents using AI — just type what you need, not keywords.</p>
+                    <div class="main-search-box">
+                        <span style="font-size:20px">🔍</span>
+                        <input id="nlp-query" placeholder="e.g. Show me all safety reports from 2024…"
+                            onkeydown="if(event.key==='Enter')doSearch()">
+                        <button class="search-btn" onclick="doSearch()">→</button>
+                    </div>
+                    <div class="query-examples">
+                        <span class="q-example" onclick="setQuery('safety inspection reports Q4 2024')">safety
+                            inspection reports Q4 2024</span>
+                        <span class="q-example" onclick="setQuery('procurement tender rolling stock')">procurement
+                            tender rolling stock</span>
+                        <span class="q-example" onclick="setQuery('employee leave policy HR')">employee leave policy
+                            HR</span>
+                        <span class="q-example" onclick="setQuery('finance audit revenue')">finance audit revenue</span>
+                        <span class="q-example" onclick="setQuery('engineering signalling upgrade')">engineering
+                            signalling upgrade</span>
+                        <span class="q-example" onclick="setQuery('station maintenance SOP')">station maintenance
+                            SOP</span>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-row">
+                    <select class="form-select" id="f-dept">
+                        <option value="">All Departments</option>
+                        <option>Operations</option>
+                        <option>Engineering</option>
+                        <option>Finance</option>
+                        <option>Safety</option>
+                        <option>HR</option>
+                        <option>Procurement</option>
+                        <option>IT</option>
+                        <option>Legal</option>
+                    </select>
+                    <select class="form-select">
+                        <option>Any Type</option>
+                        <option>PDF</option>
+                        <option>DOCX</option>
+                        <option>XLSX</option>
+                        <option>Image</option>
+                    </select>
+                    <select class="form-select">
+                        <option>Any Date</option>
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>Last 3 Months</option>
+                        <option>This Year</option>
+                    </select>
+                    <select class="form-select">
+                        <option>Relevance ↓</option>
+                        <option>Newest First</option>
+                        <option>Oldest First</option>
+                    </select>
+                    <div style="margin-left:auto;display:flex;gap:8px">
+                        <button class="btn btn-secondary btn-sm" onclick="doSearch()">🔍 Search</button>
+                        <button class="btn btn-ghost btn-sm" onclick="clearSearch()">✕ Clear</button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div id="result-stats" class="result-stats" style="display:none"></div>
+                <div id="results-container"></div>
+
+                <!-- Search Tips -->
+                <div class="card" id="tips-card">
+                    <div class="card-header">
+                        <div class="card-title">💡 Smart Search Tips</div>
+                        <div class="ai-badge">NLP Engine v2.1</div>
+                    </div>
+                    <div class="grid-3" style="gap:16px;margin-top:4px">
+                        <div style="font-size:13px">
+                            <div style="font-weight:600;margin-bottom:6px;color:var(--metro-teal)">Plain Language
+                                Queries</div>
+                            <div style="color:var(--text-secondary);line-height:1.7">"Show me all reports about safety
+                                from last quarter"<br>"Find HR documents about leave policy"</div>
+                        </div>
+                        <div style="font-size:13px">
+                            <div style="font-weight:600;margin-bottom:6px;color:var(--metro-teal)">Specific Keywords
+                            </div>
+                            <div style="color:var(--text-secondary);line-height:1.7">"rolling stock tender
+                                2025"<br>"revenue audit Jan finance"<br>"engineering signalling"</div>
+                        </div>
+                        <div style="font-size:13px">
+                            <div style="font-weight:600;margin-bottom:6px;color:var(--metro-teal)">Cross-Department
+                                Search</div>
+                            <div style="color:var(--text-secondary);line-height:1.7">Search across all 12 departments
+                                simultaneously with automatic relevance ranking.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        function setQuery(q) {
+            document.getElementById('nlp-query').value = q;
+            doSearch();
+        }
+        function doSearch() {
+            const q = document.getElementById('nlp-query').value;
+            const tips = document.getElementById('tips-card');
+            if (tips) tips.style.display = q ? 'none' : 'block';
+            const results = performSearch(q);
+            const container = document.getElementById('results-container');
+            const statsEl = document.getElementById('result-stats');
+            if (q) {
+                statsEl.style.display = 'block';
+                const t = Date.now();
+                renderSearchResults(results, container);
+                const elapsed = ((Date.now() - t) + Math.random() * 40 + 120).toFixed(0);
+                statsEl.innerHTML = `<strong>${results.length} documents</strong> found for "<em>${q}</em>" <span class="nlp-chip">✦ NLP processed in ${elapsed}ms</span>`;
+            } else {
+                statsEl.style.display = 'none';
+                container.innerHTML = '';
+            }
+        }
+        function clearSearch() {
+            document.getElementById('nlp-query').value = '';
+            document.getElementById('results-container').innerHTML = '';
+            document.getElementById('result-stats').style.display = 'none';
+            const tips = document.getElementById('tips-card');
+            if (tips) tips.style.display = 'block';
+        }
+        // Auto-show all docs on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                setQuery('show me all documents');
+            }, 300);
+        });
+    </script>
+</body>
+
+</html>

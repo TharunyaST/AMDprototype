@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kochi Metro AI-DMS — Upload & OCR</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .ocr-result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 191, 165, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 14px;
+        }
+
+        .ai-tag-suggestion {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px dashed var(--metro-teal);
+            color: var(--metro-teal);
+            background: rgba(0, 191, 165, 0.05);
+            transition: var(--transition);
+            margin: 3px;
+        }
+
+        .ai-tag-suggestion:hover,
+        .ai-tag-suggestion.selected {
+            background: rgba(0, 191, 165, 0.2);
+            border-style: solid;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 28px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .step.active {
+            border-color: var(--metro-teal);
+            color: var(--metro-teal);
+            background: rgba(0, 191, 165, 0.1);
+        }
+
+        .step.done {
+            border-color: var(--success);
+            color: var(--success);
+            background: rgba(0, 230, 118, 0.08);
+        }
+
+        .step-arrow {
+            margin: 0 6px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .conf-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .conf-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            width: 90px;
+        }
+
+        .conf-bar {
+            flex: 1;
+        }
+
+        .conf-pct {
+            font-size: 11px;
+            font-weight: 700;
+            width: 36px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item active" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                </div>
+            
+      <a href="index.html" class="btn" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s" onmouseover="this.style.background='rgba(255,82,82,0.2)'" onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+    </div>
+  </aside>
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">📤 Upload & AI Processing</span>
+                <div class="topbar-actions">
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>Upload & OCR Processing</h1>
+                    <p>Upload documents for AI classification, auto-tagging, and OCR text extraction</p>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="s1">1️⃣ Upload File</div>
+                    <div class="step-arrow">→</div>
+                    <div class="step" id="s2">2️⃣ OCR Extraction</div>
+                    <div class="step-arrow">→</div>
+                    <div class="step" id="s3">✦ AI Classification</div>
+                    <div class="step-arrow">→</div>
+                    <div class="step" id="s4">🏷️ Auto-Tagging</div>
+                    <div class="step-arrow">→</div>
+                    <div class="step" id="s5">✅ Index & Store</div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Upload Area -->
+                    <div>
+                        <div class="card mb-24">
+                            <div class="card-header">
+                                <div class="card-title">Drop Zone</div>
+                                <div class="ai-badge">AI-Powered</div>
+                            </div>
+                            <div class="upload-zone" id="drop-zone">
+                                <div class="upload-icon">📤</div>
+                                <h3>Drop files here or click to browse</h3>
+                                <p>Supports PDF, DOCX, XLSX, PNG, JPG, TIFF (max 50MB)</p>
+                                <div style="margin-top:16px" id="demo-trigger">
+                                    <button class="btn btn-primary" onclick="simulateDemoUpload()">⚡ Demo: Upload Sample
+                                        Document</button>
+                                </div>
+                            </div>
+                            <div id="upload-progress" style="display:none;margin-top:16px">
+                                <div class="card-title mb-16" style="margin-bottom:10px">Processing Queue</div>
+                                <div class="upload-items notif-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metadata Form -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Document Metadata</div>
+                                <span class="badge badge-teal">Optional Override</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Document Title</label>
+                                <input class="form-input" placeholder="Auto-detected by AI…" id="doc-title">
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <select class="form-select">
+                                        <option>Auto-detected ✦</option>
+                                        <option>Operations</option>
+                                        <option>Engineering</option>
+                                        <option>Finance</option>
+                                        <option>Safety</option>
+                                        <option>HR</option>
+                                        <option>Procurement</option>
+                                        <option>Legal</option>
+                                        <option>IT</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Document Type</label>
+                                    <select class="form-select">
+                                        <option>Auto-classified ✦</option>
+                                        <option>Report</option>
+                                        <option>SOP</option>
+                                        <option>Policy</option>
+                                        <option>Tender</option>
+                                        <option>Contract</option>
+                                        <option>Invoice</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sensitivity Level</label>
+                                <select class="form-select">
+                                    <option>🟢 Public</option>
+                                    <option>🟡 Internal</option>
+                                    <option>🟠 Confidential</option>
+                                    <option>🔴 Restricted</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes / Description</label>
+                                <textarea class="form-textarea"
+                                    placeholder="Add context for AI classification…"></textarea>
+                            </div>
+                            <button class="btn btn-secondary" onclick="showToast('Metadata saved!')">💾 Save
+                                Metadata</button>
+                        </div>
+                    </div>
+
+                    <!-- AI Results Panel -->
+                    <div>
+                        <div class="card mb-24" id="ai-result-panel">
+                            <div class="card-header">
+                                <div class="card-title">✦ AI Analysis Results</div>
+                                <span class="badge badge-green" id="ai-status-badge">Waiting…</span>
+                            </div>
+                            <div id="ai-result-content">
+                                <div style="text-align:center;padding:40px;color:var(--text-muted)">
+                                    <div style="font-size:40px;margin-bottom:10px">🤖</div>
+                                    <p>Upload a document to see AI classification results</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OCR Preview -->
+                        <div class="card mb-24" id="ocr-panel-card">
+                            <div class="card-header">
+                                <div class="card-title">🔍 OCR Extracted Text</div>
+                                <span class="badge badge-blue" id="ocr-badge">Pending</span>
+                            </div>
+                            <div id="ocr-content" class="ocr-panel">
+                                Waiting for document upload to begin OCR processing…
+                            </div>
+                            <div style="display:flex;gap:8px;margin-top:12px">
+                                <button class="btn btn-secondary btn-sm" onclick="showToast('OCR text copied!')">📋 Copy
+                                    Text</button>
+                                <button class="btn btn-secondary btn-sm" onclick="showToast('Text file downloaded!')">⬇
+                                    Export .txt</button>
+                            </div>
+                        </div>
+
+                        <!-- Batch Upload -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">📦 Batch Upload</div>
+                            </div>
+                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Process entire
+                                folders of scanned documents at once — up to 500 files per batch.</div>
+                            <div style="display:flex;flex-direction:column;gap:10px">
+                                <div style="display:flex;justify-content:space-between;font-size:12px">
+                                    <span class="text-muted">Daily Batch Quota</span>
+                                    <span class="text-teal">2,847 / 5,000 files</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:57%"></div>
+                                </div>
+                                <button class="btn btn-primary" onclick="showToast('Batch job submitted to queue!')">📤
+                                    Start Batch Job</button>
+                                <button class="btn btn-secondary" onclick="showToast('Batch scheduler opened')">⏰
+                                    Schedule Batch</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        function simulateDemoUpload() {
+            const file = { name: 'Safety_Inspection_Gate5_Scan.pdf', size: 2457600 };
+
+            // Step 1
+            document.getElementById('s1').className = 'step done';
+            document.getElementById('s2').className = 'step active';
+
+            const prog = document.getElementById('upload-progress');
+            prog.style.display = 'block';
+            const items = prog.querySelector('.upload-items');
+
+            const item = document.createElement('div');
+            item.className = 'notif-item fade-in';
+            item.innerHTML = `<div class="notif-icon" style="background:rgba(0,191,165,0.15)">📄</div>
+      <div class="notif-body">
+        <h4>${file.name}</h4>
+        <p>2.4 MB · PDF</p>
+        <div class="progress-bar mt-8" style="margin-top:8px">
+          <div class="progress-fill" id="demo-prog" style="width:0%"></div>
+        </div>
+        <p id="demo-status" style="margin-top:6px;font-size:11px;color:var(--text-muted)">Uploading…</p>
+      </div>`;
+            items.appendChild(item);
+
+            let pct = 0;
+            const iv = setInterval(() => {
+                pct = Math.min(pct + 8, 100);
+                document.getElementById('demo-prog').style.width = pct + '%';
+
+                if (pct === 30) { document.getElementById('demo-status').textContent = '🔍 Running OCR…'; document.getElementById('s2').className = 'step done'; document.getElementById('s3').className = 'step active'; }
+                if (pct === 55) { document.getElementById('demo-status').textContent = '✦ AI Classifying…'; document.getElementById('s3').className = 'step done'; document.getElementById('s4').className = 'step active'; }
+                if (pct === 75) { document.getElementById('demo-status').textContent = '🏷️ Auto-tagging…'; document.getElementById('s4').className = 'step done'; document.getElementById('s5').className = 'step active'; }
+                if (pct >= 100) {
+                    clearInterval(iv);
+                    document.getElementById('demo-status').textContent = '✅ Indexed successfully!';
+                    document.getElementById('demo-prog').style.background = 'var(--success)';
+                    document.getElementById('s5').className = 'step done';
+                    document.getElementById('ai-status-badge').textContent = '✅ Complete';
+                    document.getElementById('ai-status-badge').className = 'badge badge-green';
+                    showAIResults();
+                    showOCRResults();
+                    showToast('Document processed & indexed successfully!');
+                }
+            }, 180);
+        }
+
+        function showAIResults() {
+            document.getElementById('ai-result-content').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="ocr-result-card">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Document Classification</div>
+          <div style="font-size:16px;font-weight:700;color:var(--metro-teal)">Safety Inspection Report</div>
+          <div class="conf-meter"><div class="conf-label">Confidence</div><div class="conf-bar"><div class="progress-bar"><div class="progress-fill" style="width:96%"></div></div></div><div class="conf-pct text-teal">96%</div></div>
+        </div>
+        <div class="ocr-result-card">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Department Detection</div>
+          <span class="badge badge-orange">Safety Department</span>
+          <div class="conf-meter"><div class="conf-label">Confidence</div><div class="conf-bar"><div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div></div><div class="conf-pct text-teal">91%</div></div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">AI Suggested Tags <span style="color:var(--metro-teal)">(click to accept)</span></div>
+          <span class="ai-tag-suggestion" onclick="this.classList.toggle('selected')">+ safety</span>
+          <span class="ai-tag-suggestion" onclick="this.classList.toggle('selected')">+ inspection</span>
+          <span class="ai-tag-suggestion selected" onclick="this.classList.toggle('selected')">+ gate5</span>
+          <span class="ai-tag-suggestion selected" onclick="this.classList.toggle('selected')">+ Q1-2025</span>
+          <span class="ai-tag-suggestion" onclick="this.classList.toggle('selected')">+ scanned</span>
+          <span class="ai-tag-suggestion" onclick="this.classList.toggle('selected')">+ infrastructure</span>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Document Sensitivity</div>
+          <span class="badge badge-orange">🟠 INTERNAL USE ONLY</span>
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Tags confirmed & document indexed!')">✅ Confirm & Save to Repository</button>
+      </div>`;
+        }
+
+        function showOCRResults() {
+            document.getElementById('ocr-badge').textContent = '✅ Extracted';
+            document.getElementById('ocr-content').innerHTML = `<span style="color:var(--metro-teal)">/// OCR EXTRACTED TEXT ///</span><br><br>
+KOCHI METRO RAIL LIMITED<br>
+SAFETY INSPECTION REPORT<br>
+Gate 5 — North Platform, Aluva Station<br>
+Date: 14-02-2025<br>
+Inspector ID: KM-SAF-0078<br><br>
+INSPECTION SUMMARY:<br>
+1. Platform screen doors — All 24 units operational ✓<br>
+2. CCTV coverage — 18/18 cameras functional ✓<br>
+3. Fire suppression system — Last tested: 10-02-2025 ✓<br>
+4. Emergency exit lighting — (!) 2 units require replacement<br>
+5. Passenger help points — 6/6 active ✓<br><br>
+RECOMMENDATIONS:<br>
+• Schedule emergency exit lighting replacement by 20-02-2025<br>
+• Conduct follow-up inspection in 30 days<br><br>
+Signed: Rajesh Kumar (KMRL Safety Dept.)<br>
+[Signature block detected — OCR confidence: 87%]`;
+        }
+    </script>
+</body>
+
+</html>

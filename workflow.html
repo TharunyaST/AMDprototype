@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Approval Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .wf-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .wf-card:hover {
+            border-color: rgba(0, 191, 165, 0.3);
+        }
+
+        .wf-card.overdue {
+            border-left: 4px solid var(--danger);
+        }
+
+        .wf-card.pending {
+            border-left: 4px solid var(--warning);
+        }
+
+        .wf-card.approved {
+            border-left: 4px solid var(--success);
+        }
+
+        .wf-card.in-review {
+            border-left: 4px solid var(--info);
+        }
+
+        .wf-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .wf-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .wf-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .wf-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .notif-settings {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .notif-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .notif-row:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item active" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                </div>
+
+                <a href="index.html" class="btn"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
+                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
+                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">⚡ Approval Workflow</span>
+                <div class="topbar-actions">
+                    <button class="btn btn-primary btn-sm" onclick="showToast('Bulk approval sent!')">✅ Approve All
+                        (5)</button>
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>Auto-Notification & Approval Workflow</h1>
+                    <p>AI-routed document approvals with real-time notifications and SLA tracking</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px">
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Approval</div>
+                        <div class="stat-value text-warning" data-count="5">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Approved Today</div>
+                        <div class="stat-value text-success" data-count="28">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Overdue</div>
+                        <div class="stat-value text-danger" data-count="3">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg. Turnaround</div>
+                        <div class="stat-value text-teal" data-suffix="h" data-count="4">0</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Approval Queue -->
+                    <div>
+                        <div class="card mb-24">
+                            <div class="card-header">
+                                <div class="card-title">📋 Approval Queue</div>
+                                <div style="display:flex;gap:8px">
+                                    <span class="badge badge-red" style="cursor:pointer">Overdue (3)</span>
+                                    <span class="badge badge-gold" style="cursor:pointer">Pending (2)</span>
+                                </div>
+                            </div>
+
+                            <!-- Overdue items -->
+                            <div class="wf-card overdue">
+                                <div class="wf-header">
+                                    <div>
+                                        <div class="wf-title">📊 AnnualBudget_Proposal_FY2025.xlsx</div>
+                                        <div class="wf-sub">Finance Dept · Suresh Pillai · Submitted 5 days ago</div>
+                                    </div>
+                                    <span class="badge badge-red">⚠ OVERDUE</span>
+                                </div>
+                                <div class="flow-steps" style="margin-bottom:12px">
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">Submit</div>
+                                    </div>
+                                    <div class="flow-connector done"></div>
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">AI Review</div>
+                                    </div>
+                                    <div class="flow-connector active"></div>
+                                    <div class="flow-step active">
+                                        <div class="flow-step-icon">👔</div>
+                                        <div class="flow-step-label">DGM</div>
+                                    </div>
+                                    <div class="flow-connector"></div>
+                                    <div class="flow-step pending">
+                                        <div class="flow-step-icon">🏛</div>
+                                        <div class="flow-step-label">Board</div>
+                                    </div>
+                                </div>
+                                <div class="wf-actions">
+                                    <button class="btn btn-primary btn-sm"
+                                        onclick="approveDoc(this,'AnnualBudget_Proposal_FY2025.xlsx')">✅
+                                        Approve</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="openModal('reject-modal')">↩
+                                        Return</button>
+                                    <button class="btn btn-ghost btn-sm">👁 Preview</button>
+                                    <button class="btn btn-secondary btn-sm"
+                                        onclick="showToast('Reminder sent to approver!')">🔔 Remind</button>
+                                </div>
+                            </div>
+
+                            <div class="wf-card overdue">
+                                <div class="wf-header">
+                                    <div>
+                                        <div class="wf-title">⚖️ Land_Acquisition_Notice_Thrippunithura.pdf</div>
+                                        <div class="wf-sub">Legal Dept · Vikram Nair · Submitted 4 days ago</div>
+                                    </div>
+                                    <span class="badge badge-red">⚠ OVERDUE</span>
+                                </div>
+                                <div class="flow-steps" style="margin-bottom:12px">
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">Submit</div>
+                                    </div>
+                                    <div class="flow-connector done"></div>
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">AI Review</div>
+                                    </div>
+                                    <div class="flow-connector active"></div>
+                                    <div class="flow-step active">
+                                        <div class="flow-step-icon">⚖️</div>
+                                        <div class="flow-step-label">Legal Head</div>
+                                    </div>
+                                    <div class="flow-connector"></div>
+                                    <div class="flow-step pending">
+                                        <div class="flow-step-icon">🏛</div>
+                                        <div class="flow-step-label">MD Office</div>
+                                    </div>
+                                </div>
+                                <div class="wf-actions">
+                                    <button class="btn btn-primary btn-sm"
+                                        onclick="approveDoc(this,'Land_Acquisition_Notice.pdf')">✅ Approve</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="openModal('reject-modal')">↩
+                                        Return</button>
+                                    <button class="btn btn-ghost btn-sm">👁 Preview</button>
+                                </div>
+                            </div>
+
+                            <div class="wf-card pending">
+                                <div class="wf-header">
+                                    <div>
+                                        <div class="wf-title">📦 Procurement_Tender_RollingStock_2025.docx</div>
+                                        <div class="wf-sub">Procurement · Priya Menon · Submitted 2 days ago</div>
+                                    </div>
+                                    <span class="badge badge-gold">⏳ PENDING</span>
+                                </div>
+                                <div class="flow-steps" style="margin-bottom:12px">
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">Submit</div>
+                                    </div>
+                                    <div class="flow-connector done"></div>
+                                    <div class="flow-step done">
+                                        <div class="flow-step-icon">✅</div>
+                                        <div class="flow-step-label">AI Review</div>
+                                    </div>
+                                    <div class="flow-connector active"></div>
+                                    <div class="flow-step active">
+                                        <div class="flow-step-icon">👔</div>
+                                        <div class="flow-step-label">You</div>
+                                    </div>
+                                    <div class="flow-connector"></div>
+                                    <div class="flow-step pending">
+                                        <div class="flow-step-icon">🏛</div>
+                                        <div class="flow-step-label">Board</div>
+                                    </div>
+                                </div>
+                                <div class="wf-actions">
+                                    <button class="btn btn-primary btn-sm"
+                                        onclick="approveDoc(this,'Procurement_Tender_RollingStock.docx')">✅
+                                        Approve</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="openModal('reject-modal')">↩
+                                        Return</button>
+                                    <button class="btn btn-ghost btn-sm">👁 Preview</button>
+                                </div>
+                            </div>
+
+                            <div class="wf-card in-review">
+                                <div class="wf-header">
+                                    <div>
+                                        <div class="wf-title">🔧 Station_SOP_Revision_MG_Road_2025.pdf</div>
+                                        <div class="wf-sub">Operations · Arun Das · Submitted 1 day ago</div>
+                                    </div>
+                                    <span class="badge badge-blue">🔍 IN REVIEW</span>
+                                </div>
+                                <div class="wf-actions">
+                                    <button class="btn btn-primary btn-sm"
+                                        onclick="approveDoc(this,'Station_SOP_Revision.pdf')">✅ Approve</button>
+                                    <button class="btn btn-ghost btn-sm">👁 Preview</button>
+                                </div>
+                            </div>
+
+                            <div class="wf-card approved" style="opacity:0.7">
+                                <div class="wf-header">
+                                    <div>
+                                        <div class="wf-title">📋 HR_Leave_Policy_Circular_2025.pdf</div>
+                                        <div class="wf-sub">HR Dept · Divya Nair · Approved 3 hours ago</div>
+                                    </div>
+                                    <span class="badge badge-green">✅ APPROVED</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Timeline + Notifications -->
+                    <div>
+                        <!-- Workflow Audit Trail -->
+                        <div class="card mb-24">
+                            <div class="card-header">
+                                <div class="card-title">📜 Audit Trail</div>
+                                <span class="badge badge-teal">Immutable Log</span>
+                            </div>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-dot done"></div>
+                                    <div class="timeline-content">
+                                        <h4>HR_Leave_Policy.pdf — Approved ✅</h4>
+                                        <p>Rajesh Kumar → DGM-HR → Published to all staff</p>
+                                        <div class="timeline-time">Today, 08:42 AM</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-dot pending"></div>
+                                    <div class="timeline-content">
+                                        <h4>AnnualBudget_FY2025.xlsx — Reminder Sent</h4>
+                                        <p>Auto-notification triggered (SLA breach: 5 Days)</p>
+                                        <div class="timeline-time">Today, 08:00 AM</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-content">
+                                        <h4>Station_SOP_MG_Road.pdf — Submitted</h4>
+                                        <p>AI classified → Safety SOP · Routed to Engineering Head</p>
+                                        <div class="timeline-time">Yesterday, 04:15 PM</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-dot rejected"></div>
+                                    <div class="timeline-content">
+                                        <h4>Vendor_Contract_Draft.docx — Returned</h4>
+                                        <p>Rejected: "Missing legal seal. Please re-attach." by Vikram Nair</p>
+                                        <div class="timeline-time">Yesterday, 11:30 AM</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-dot done"></div>
+                                    <div class="timeline-content">
+                                        <h4>IT_Security_Policy.pdf — Approved ✅</h4>
+                                        <p>Ananya Raj → DGM-IT → Published</p>
+                                        <div class="timeline-time">2 Days Ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Settings -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">🔔 Auto-Notification Settings</div>
+                            </div>
+                            <div style="margin-bottom:14px">
+                                <div class="notif-row">
+                                    <span>Email alerts for new submissions</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="notif-row">
+                                    <span>SMS on overdue approvals</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="notif-row">
+                                    <span>In-app push notifications</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="notif-row">
+                                    <span>WhatsApp alerts (departmental)</span>
+                                    <div class="toggle-switch"></div>
+                                </div>
+                                <div class="notif-row">
+                                    <span>SLA breach auto-escalation</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                                <div class="notif-row">
+                                    <span>Approval completion summary</span>
+                                    <div class="toggle-switch on"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">SLA Limit (Days)</label>
+                                <input class="form-input" type="number" value="3" min="1" max="30">
+                            </div>
+                            <button class="btn btn-primary" onclick="showToast('Notification settings saved!')">💾 Save
+                                Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal-overlay" id="reject-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>↩ Return Document</h2>
+                <span class="modal-close" onclick="closeModal('reject-modal')">✕</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Reason for Return</label>
+                <textarea class="form-textarea"
+                    placeholder="Explain why this document is being returned for revision…"></textarea>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:4px">
+                <button class="btn btn-danger"
+                    onclick="closeModal('reject-modal');showToast('Document returned to submitter with comments')">↩
+                    Return Document</button>
+                <button class="btn btn-secondary" onclick="closeModal('reject-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function approveDoc(btn, name) {
+            const card = btn.closest('.wf-card');
+            card.classList.remove('overdue', 'pending', 'in-review');
+            card.classList.add('approved');
+            card.style.opacity = '0.7';
+            card.querySelector('.wf-header .badge, .wf-header span:last-child').outerHTML = '<span class="badge badge-green">✅ APPROVED</span>';
+            const actions = card.querySelector('.wf-actions');
+            if (actions) actions.innerHTML = '<span style="font-size:12px;color:var(--success)">✅ Approved by you — notification sent to all stakeholders</span>';
+            showToast(`${name} approved! Stakeholders notified via email + SMS.`);
+        }
+    </script>
+</body>
+
+</html>

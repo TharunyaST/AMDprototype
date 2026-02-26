@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI — DMS | Sign In</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .bg-particles {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0, 191, 165, 0.08);
+      animation: floatUp 12s infinite ease-in-out;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+      }
+    }
+
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 900px;
+      width: 100%;
+      background: rgba(10, 32, 64, 0.85);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+    }
+
+    .login-left {
+      background: linear-gradient(145deg, #001838, #003580);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-left::before {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 191, 165, 0.25), transparent 70%);
+      border-radius: 50%;
+    }
+
+    .metro-logo-big {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .metro-logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--metro-teal), var(--metro-blue));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+
+    .metro-logo-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .metro-logo-text p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 2px;
+    }
+
+    .login-hero h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .login-hero p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.7;
+    }
+
+    .feat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .feat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .feat-icon {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      background: rgba(0, 191, 165, 0.15);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .login-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .login-stat {}
+
+    .login-stat .num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--metro-teal);
+    }
+
+    .login-stat .lbl {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .login-right {
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-right h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .login-right p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .role-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .role-pill {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid var(--glass-border);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .role-pill .r-icon {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .role-pill.selected {
+      border-color: var(--metro-teal);
+      background: rgba(0, 191, 165, 0.1);
+      color: var(--metro-teal);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--metro-teal), #0097a7);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 191, 165, 0.4);
+    }
+
+    .forgot-link {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .forgot-link a {
+      color: var(--metro-teal);
+      text-decoration: none;
+    }
+
+    .metro-strip {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    @media (max-width: 768px) {
+      .login-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .login-left {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="metro-strip"
+    style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+  </div>
+  <div class="bg-particles" id="particles"></div>
+
+  <div class="login-wrap fade-in">
+    <div class="login-left">
+      <div class="metro-logo-big">
+        <div class="metro-logo-icon">�️</div>
+        <div class="metro-logo-text">
+          <h1>AI — DMS</h1>
+          <p>Documentation Management System</p>
+        </div>
+      </div>
+      <div class="login-hero">
+        <h2>Smarter Documents.<br>Faster Decisions.</h2>
+        <p>AI-powered document management that automates classification, OCR, and approvals — reducing paperwork by 60%+
+          and accelerating every workflow.</p>
+        <div class="feat-list">
+          <div class="feat-item">
+            <div class="feat-icon">✦</div>AI-based Auto Classification & Tagging
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">🔍</div>OCR + Natural Language Search
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">🔐</div>Role-Based Secure Access Control
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">⚡</div>Real-time Approval Workflows
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">☁️</div>Cloud-Integrated & Audit-Ready
+          </div>
+        </div>
+      </div>
+      <div class="login-stats">
+        <div class="login-stat">
+          <div class="num">60%+</div>
+          <div class="lbl">Less Paperwork</div>
+        </div>
+        <div class="login-stat">
+          <div class="num">12</div>
+          <div class="lbl">Departments</div>
+        </div>
+        <div class="login-stat">
+          <div class="num">50K+</div>
+          <div class="lbl">Docs Indexed</div>
+        </div>
+      </div>
+    </div>
+    <div class="login-right">
+      <h2>Welcome Back 👋</h2>
+      <p>Sign in to access your workspace</p>
+      <div class="role-select">
+        <div class="role-pill selected" onclick="selectRole(this,'General Staff')">
+          <span class="r-icon">👤</span>Staff
+        </div>
+        <div class="role-pill" onclick="selectRole(this,'Department Head')">
+          <span class="r-icon">👔</span>Manager
+        </div>
+        <div class="role-pill" onclick="selectRole(this,'Administrator')">
+          <span class="r-icon">🛡️</span>Admin
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Employee ID / Email</label>
+        <input class="form-input" placeholder="employee@organisation.com" id="email-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="pw-input">
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="remember" style="accent-color:var(--metro-teal)">
+        <label for="remember" style="font-size:12px;color:var(--text-muted)">Remember this device for 30 days</label>
+      </div>
+      <button class="login-btn" onclick="doLogin()">🔐 Sign In to Portal</button>
+      <div class="forgot-link">Forgot credentials? <a href="#">Contact IT Support</a></div>
+      <hr class="sep">
+      <div style="text-align:center;font-size:11px;color:var(--text-muted)">
+        🔒 Secured with AES-256 · ISO 27001 Compliant · AI-DMS Security Policy v2.4
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Particles
+    const pc = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 60 + 20;
+      p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random() * 100}%;animation-delay:${Math.random() * 12}s;animation-duration:${10 + Math.random() * 8}s`;
+      pc.appendChild(p);
+    }
+
+    function selectRole(el, role) {
+      document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function doLogin() {
+      const email = document.getElementById('email-input').value;
+      const pw = document.getElementById('pw-input').value;
+      if (!email || !pw) { showToast('Please enter your credentials', 'error'); return; }
+      showToast('Authenticating…', 'success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+    }
+  </script>
+</body>
+
+</html>

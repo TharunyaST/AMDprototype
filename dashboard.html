@@ -1,0 +1,467 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI — DMS | Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        canvas {
+            display: block;
+        }
+
+        .alert-strip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 202, 40, 0.1);
+            border: 1px solid rgba(255, 202, 40, 0.3);
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--warning);
+            animation: pulse 3s infinite;
+        }
+
+        .mini-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            flex: 1;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .activity-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+
+        .a-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .a-info {
+            flex: 1;
+        }
+
+        .a-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .a-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .a-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .dept-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dept-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .dept-name {
+            width: 120px;
+            color: var(--text-secondary);
+        }
+
+        .dept-prog {
+            flex: 1;
+        }
+
+        .dept-count {
+            width: 40px;
+            text-align: right;
+            color: var(--text-muted);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 1.5s infinite;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="metro-strip"
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    </div>
+    <div class="app-shell" style="padding-top:4px">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🗂️</div>
+                <div class="logo-text">AI — DMS<span>Document Management Portal</span></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a class="nav-item active" href="dashboard.html"><span class="icon">📊</span>Dashboard</a>
+                <a class="nav-item" href="repository.html"><span class="icon">🗄️</span>Repository</a>
+                <a class="nav-item" href="upload.html"><span class="icon">📤</span>Upload & OCR</a>
+                <a class="nav-item" href="search.html"><span class="icon">🔍</span>Smart Search</a>
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item" href="workflow.html"><span class="icon">⚡</span>Approval Workflow<span
+                        class="nav-badge">5</span></a>
+                <a class="nav-item" href="access.html"><span class="icon">🔐</span>Access Control</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card" onclick="window.location='index.html'">
+                    <div class="user-avatar">RK</div>
+                    <div class="user-info">
+                        <div class="user-name">Rajesh Kumar</div>
+                        <div class="user-role">Dept. Head · Safety</div>
+                    </div>
+                    <span style="color:var(--text-muted);font-size:14px">⚙️</span>
+                </div>
+
+                <a href="index.html" class="btn"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
+                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
+                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+            <div class="topbar">
+                <span class="topbar-title">📊 Real-time Dashboard</span>
+                <div class="topbar-search">
+                    <span>🔍</span>
+                    <input placeholder="Quick search documents…" onclick="window.location='search.html'">
+                </div>
+                <div class="topbar-actions">
+                    <div class="icon-btn" onclick="window.location='workflow.html'">🔔<div class="badge-dot"></div>
+                    </div>
+                    <div class="icon-btn">☀️</div>
+                    <div class="icon-btn" onclick="window.location='index.html'">🚪</div>
+                </div>
+            </div>
+            <div class="page-content">
+
+                <!-- ALERT -->
+                <div class="alert-strip">
+                    <div class="live-dot"></div>
+                    <strong>5 documents</strong> pending your approval — <a href="workflow.html"
+                        style="color:var(--warning);text-decoration:underline;margin-left:4px">Review now →</a>
+                    <span style="margin-left:auto;font-size:11px;opacity:0.7">Live · Updated just now</span>
+                </div>
+
+                <!-- STATS -->
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Documents</div>
+                        <div class="stat-value text-teal" data-count="52480">0</div>
+                        <div class="stat-delta up">↑ 340 this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">AI Classified Today</div>
+                        <div class="stat-value" data-count="847">0</div>
+                        <div class="stat-delta up">↑ 92% accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Approvals</div>
+                        <div class="stat-value text-warning" data-count="5">0</div>
+                        <div class="stat-delta down">▼ 3 overdue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">OCR Processed</div>
+                        <div class="stat-value" data-count="3210">0</div>
+                        <div class="stat-delta up">↑ 156 today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Users</div>
+                        <div class="stat-value text-success" data-count="38">0</div>
+                        <div class="stat-delta up">↑ Online now</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Storage Used</div>
+                        <div class="stat-value" data-suffix=" GB" data-count="246">0</div>
+                        <div class="stat-delta">of 1 TB allocated</div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE ROW -->
+                <div class="grid-2 mb-24">
+                    <!-- Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Recent Activity</div>
+                                <div class="card-subtitle">Document events in real-time</div>
+                            </div>
+                            <div class="live-dot"></div>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-row">
+                                <div class="a-icon" style="background:rgba(0,191,165,0.15)">📤</div>
+                                <div class="a-info">
+                                    <div class="a-title">Safety_Inspection_Q4_2024.pdf</div>
+                                    <div class="a-sub">Uploaded · Auto-classified: Safety · OCR ✓</div>
+                                </div>
+                                <div class="a-time">2m ago</div>
+                            </div>
+                            <div class="activity-row">
+                                <div class="a-icon" style="background:rgba(255,202,40,0.15)">✍️</div>
+                                <div class="a-info">
+                                    <div class="a-title">Tender_RollingStock_2025.docx</div>
+                                    <div class="a-sub">Approval requested by Priya Menon</div>
+                                </div>
+                                <div class="a-time">8m ago</div>
+                            </div>
+                            <div class="activity-row">
+                                <div class="a-icon" style="background:rgba(0,230,118,0.15)">✅</div>
+                                <div class="a-info">
+                                    <div class="a-title">HR_Circular_LeavePolicy.pdf</div>
+                                    <div class="a-sub">Approved by DGM-HR · Notified 120 staff</div>
+                                </div>
+                                <div class="a-time">23m ago</div>
+                            </div>
+                            <div class="activity-row">
+                                <div class="a-icon" style="background:rgba(64,196,255,0.15)">🔍</div>
+                                <div class="a-info">
+                                    <div class="a-title">Search: "rolling stock maintenance"</div>
+                                    <div class="a-sub">7 results · Arun Das · Engineering Dept</div>
+                                </div>
+                                <div class="a-time">31m ago</div>
+                            </div>
+                            <div class="activity-row">
+                                <div class="a-icon" style="background:rgba(255,112,67,0.15)">🔐</div>
+                                <div class="a-info">
+                                    <div class="a-title">Access revoked: Suresh P. (Intern)</div>
+                                    <div class="a-sub">Finance docs restricted by Admin</div>
+                                </div>
+                                <div class="a-time">1h ago</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department Upload Volume -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Dept. Document Volume</div>
+                                <div class="card-subtitle">Documents uploaded this month</div>
+                            </div>
+                            <span class="badge badge-teal">This Month</span>
+                        </div>
+                        <div class="dept-bar">
+                            <div class="dept-row">
+                                <div class="dept-name">Operations</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:85%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">1,240</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">Engineering</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:72%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">1,050</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">Finance</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:60%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">870</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">Safety</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:55%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">800</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">HR</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:42%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">610</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">Procurement</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:38%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">550</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">IT</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:28%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">405</div>
+                            </div>
+                            <div class="dept-row">
+                                <div class="dept-name">Legal</div>
+                                <div class="dept-prog">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:20%"></div>
+                                    </div>
+                                </div>
+                                <div class="dept-count">290</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM ROW -->
+                <div class="grid-3">
+                    <!-- AI Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">AI Performance</div>
+                            <div class="ai-badge">Live</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:12px">
+                            <div>
+                                <div class="flex justify-between mb-16" style="margin-bottom:6px;font-size:12px">
+                                    <span class="text-muted">Classification Accuracy</span><span
+                                        class="text-teal font-bold">96.2%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:96%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-16" style="margin-bottom:6px;font-size:12px">
+                                    <span class="text-muted">OCR Text Extraction</span><span
+                                        class="text-teal">91.8%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:92%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-16" style="margin-bottom:6px;font-size:12px">
+                                    <span class="text-muted">NLP Search Relevance</span><span
+                                        class="text-teal">89.4%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:89%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-16" style="margin-bottom:6px;font-size:12px">
+                                    <span class="text-muted">Auto-Tagging Precision</span><span
+                                        class="text-teal">93.1%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:93%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workflow Status -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Workflow Status</div>
+                            <a href="workflow.html" class="btn btn-ghost btn-sm" style="font-size:11px">View All →</a>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            <div class="mini-card" style="border-left:3px solid var(--warning)">
+                                <div style="font-size:12px;font-weight:600;margin-bottom:2px">
+                                    Tender_RollingStock_2025.docx</div>
+                                <div style="font-size:11px;color:var(--text-muted)">Awaiting DGM Approval · 2 days</div>
+                            </div>
+                            <div class="mini-card" style="border-left:3px solid var(--danger)">
+                                <div style="font-size:12px;font-weight:600;margin-bottom:2px">
+                                    AnnualBudget_Proposal_FY25.xlsx</div>
+                                <div style="font-size:11px;color:var(--danger)">Overdue · 5 days pending</div>
+                            </div>
+                            <div class="mini-card" style="border-left:3px solid var(--metro-teal)">
+                                <div style="font-size:12px;font-weight:600;margin-bottom:2px">
+                                    Station_SOP_Revision_2025.pdf</div>
+                                <div style="font-size:11px;color:var(--text-muted)">In review · Eng. Head</div>
+                            </div>
+                            <div class="mini-card" style="border-left:3px solid var(--success)">
+                                <div style="font-size:12px;font-weight:600;margin-bottom:2px">
+                                    HR_Circular_LeavePolicy.pdf</div>
+                                <div style="font-size:11px;color:var(--success)">✅ Approved &amp; Published</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Quick Actions</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            <a href="upload.html" class="btn btn-primary" style="justify-content:center">📤 Upload
+                                Document</a>
+                            <a href="search.html" class="btn btn-secondary" style="justify-content:center">🔍 Smart
+                                Search</a>
+                            <a href="workflow.html" class="btn btn-secondary" style="justify-content:center">⚡ Review
+                                Approvals (5)</a>
+                            <a href="repository.html" class="btn btn-secondary" style="justify-content:center">🗄️
+                                Browse Repository</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
