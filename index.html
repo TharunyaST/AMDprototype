@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI — DMS | Sign In</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    (function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();
+  </script>
   <style>
     body {
       display: flex;
@@ -54,25 +57,28 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      max-width: 900px;
+      grid-template-columns: 1fr;
+      max-width: 480px;
       width: 100%;
-      background: rgba(10, 32, 64, 0.85);
+      background: var(--sidebar-bg);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(20px);
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
     }
 
     .login-left {
-      background: linear-gradient(145deg, #001838, #003580);
+      background: linear-gradient(145deg, #e8f0fe, #dbe4ff);
       padding: 48px 40px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       overflow: hidden;
+    }
+
+    [data-theme="dark"] .login-left {
+      background: linear-gradient(145deg, #1c1f26, #1a237e);
     }
 
     .login-left::before {
@@ -123,11 +129,12 @@
       font-weight: 700;
       line-height: 1.3;
       margin-bottom: 16px;
+      color: var(--text-primary);
     }
 
     .login-hero p {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--text-secondary);
       line-height: 1.7;
     }
 
@@ -163,7 +170,10 @@
       gap: 24px;
     }
 
-    .login-stat {}
+    .login-stat {
+      display: flex;
+      flex-direction: column;
+    }
 
     .login-stat .num {
       font-family: 'Space Grotesk', sans-serif;
@@ -231,7 +241,7 @@
     .login-btn {
       width: 100%;
       padding: 13px;
-      background: linear-gradient(135deg, var(--metro-teal), #0097a7);
+      background: linear-gradient(135deg, #3b5bdb, #2b4bc7);
       border: none;
       border-radius: 10px;
       color: #fff;
@@ -279,95 +289,108 @@
 </head>
 
 <body>
+  <!-- theme toggle fixed top-right -->
+  <button onclick="toggleTheme()" id="themeToggle"
+    style="position:fixed;top:20px;right:20px;z-index:999;width:40px;height:40px;border-radius:50%;border:1px solid var(--glass-border);background:var(--sidebar-bg);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-card)">☀️</button>
   <div class="metro-strip"
-    style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+    style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#3b5bdb,#2f9e44,#51cf66,#e67700)">
   </div>
   <div class="bg-particles" id="particles"></div>
 
   <div class="login-wrap fade-in">
-    <div class="login-left">
-      <div class="metro-logo-big">
-        <div class="metro-logo-icon">�️</div>
-        <div class="metro-logo-text">
-          <h1>AI — DMS</h1>
-          <p>Documentation Management System</p>
-        </div>
-      </div>
-      <div class="login-hero">
-        <h2>Smarter Documents.<br>Faster Decisions.</h2>
-        <p>AI-powered document management that automates classification, OCR, and approvals — reducing paperwork by 60%+
-          and accelerating every workflow.</p>
-        <div class="feat-list">
-          <div class="feat-item">
-            <div class="feat-icon">✦</div>AI-based Auto Classification & Tagging
-          </div>
-          <div class="feat-item">
-            <div class="feat-icon">🔍</div>OCR + Natural Language Search
-          </div>
-          <div class="feat-item">
-            <div class="feat-icon">🔐</div>Role-Based Secure Access Control
-          </div>
-          <div class="feat-item">
-            <div class="feat-icon">⚡</div>Real-time Approval Workflows
-          </div>
-          <div class="feat-item">
-            <div class="feat-icon">☁️</div>Cloud-Integrated & Audit-Ready
-          </div>
-        </div>
-      </div>
-      <div class="login-stats">
-        <div class="login-stat">
-          <div class="num">60%+</div>
-          <div class="lbl">Less Paperwork</div>
-        </div>
-        <div class="login-stat">
-          <div class="num">12</div>
-          <div class="lbl">Departments</div>
-        </div>
-        <div class="login-stat">
-          <div class="num">50K+</div>
-          <div class="lbl">Docs Indexed</div>
-        </div>
-      </div>
-    </div>
+
+
     <div class="login-right">
-      <h2>Welcome Back 👋</h2>
-      <p>Sign in to access your workspace</p>
-      <div class="role-select">
-        <div class="role-pill selected" onclick="selectRole(this,'General Staff')">
-          <span class="r-icon">👤</span>Staff
+      <h2>Choose Your Role 👋</h2>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:28px">Click your role to enter the portal instantly
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div onclick="enterAs('admin')"
+          style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--glass-border);border-radius:12px;cursor:pointer;transition:all 0.2s ease;background:var(--surface)"
+          onmouseover="this.style.borderColor='#3b5bdb';this.style.background='rgba(59,91,219,0.06)'"
+          onmouseout="this.style.borderColor='var(--glass-border)';this.style.background='var(--surface)'">
+          <div
+            style="width:48px;height:48px;background:linear-gradient(135deg,#3b5bdb,#2b4bc7);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">
+            🛡️</div>
+          <div>
+            <div style="font-weight:700;font-size:15px">Administrator</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Full system access · Manage users &
+              settings</div>
+          </div>
+          <div style="margin-left:auto;font-size:20px;color:var(--text-muted)">→</div>
         </div>
-        <div class="role-pill" onclick="selectRole(this,'Department Head')">
-          <span class="r-icon">👔</span>Manager
+
+        <div onclick="enterAs('manager')"
+          style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--glass-border);border-radius:12px;cursor:pointer;transition:all 0.2s ease;background:var(--surface)"
+          onmouseover="this.style.borderColor='#2f9e44';this.style.background='rgba(47,158,68,0.06)'"
+          onmouseout="this.style.borderColor='var(--glass-border)';this.style.background='var(--surface)'">
+          <div
+            style="width:48px;height:48px;background:linear-gradient(135deg,#2f9e44,#1a6b2e);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">
+            👔</div>
+          <div>
+            <div style="font-weight:700;font-size:15px">Department Head</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Review & approve documents · Dept.
+              oversight</div>
+          </div>
+          <div style="margin-left:auto;font-size:20px;color:var(--text-muted)">→</div>
         </div>
-        <div class="role-pill" onclick="selectRole(this,'Administrator')">
-          <span class="r-icon">🛡️</span>Admin
+
+        <div onclick="enterAs('staff')"
+          style="display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--glass-border);border-radius:12px;cursor:pointer;transition:all 0.2s ease;background:var(--surface)"
+          onmouseover="this.style.borderColor='#e67700';this.style.background='rgba(230,119,0,0.06)'"
+          onmouseout="this.style.borderColor='var(--glass-border)';this.style.background='var(--surface)'">
+          <div
+            style="width:48px;height:48px;background:linear-gradient(135deg,#e67700,#b35900);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">
+            👤</div>
+          <div>
+            <div style="font-weight:700;font-size:15px">General Staff</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Upload & search documents · View reports
+            </div>
+          </div>
+          <div style="margin-left:auto;font-size:20px;color:var(--text-muted)">→</div>
         </div>
+
       </div>
-      <div class="form-group">
-        <label class="form-label">Employee ID / Email</label>
-        <input class="form-input" placeholder="employee@organisation.com" id="email-input">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-input" type="password" placeholder="••••••••" id="pw-input">
-      </div>
-      <div class="form-group" style="display:flex;align-items:center;gap:8px">
-        <input type="checkbox" id="remember" style="accent-color:var(--metro-teal)">
-        <label for="remember" style="font-size:12px;color:var(--text-muted)">Remember this device for 30 days</label>
-      </div>
-      <button class="login-btn" onclick="doLogin()">🔐 Sign In to Portal</button>
-      <div class="forgot-link">Forgot credentials? <a href="#">Contact IT Support</a></div>
-      <hr class="sep">
-      <div style="text-align:center;font-size:11px;color:var(--text-muted)">
-        🔒 Secured with AES-256 · ISO 27001 Compliant · AI-DMS Security Policy v2.4
+
+      <div style="text-align:center;margin-top:24px;font-size:11px;color:var(--text-muted)">
+        🔒 Secured · ISO 27001 Compliant · AI-DMS v2.4
       </div>
     </div>
   </div>
 
-  <script src="app.js"></script>
+
   <script>
-    // Particles
+    // ── Theme init ──────────────────────────────────────────
+    function toggleTheme() {
+      const html = document.documentElement;
+      const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('aidms-theme', newTheme);
+      document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    }
+    (function () {
+      const s = localStorage.getItem('aidms-theme') || 'light';
+      document.getElementById('themeToggle').textContent = s === 'dark' ? '☀️' : '🌙';
+    })();
+
+    // ── One-click role entry ─────────────────────────────────
+    const ROLES = {
+      admin: { name: 'Admin User', role: 'Administrator', department: 'IT', avatar: 'AU', email: 'admin@aidms.com' },
+      manager: { name: 'Dept. Manager', role: 'Department Head', department: 'Operations', avatar: 'DM', email: 'manager@aidms.com' },
+      staff: { name: 'Staff Member', role: 'General Staff', department: 'Admin', avatar: 'SM', email: 'staff@aidms.com' },
+    };
+
+    function enterAs(role) {
+      const user = ROLES[role];
+      if (!user) return;
+      localStorage.setItem('aidms-user', JSON.stringify(user));
+      window.location.href = 'dashboard.html';
+    }
+
+
+    // ── Particles ───────────────────────────────────────────
     const pc = document.getElementById('particles');
     for (let i = 0; i < 18; i++) {
       const p = document.createElement('div');
@@ -377,18 +400,89 @@
       pc.appendChild(p);
     }
 
-    function selectRole(el, role) {
+    // ── Toast ────────────────────────────────────────────────
+    function showToast(msg, type) {
+      // Remove any existing toast
+      const old = document.getElementById('login-toast');
+      if (old) old.remove();
+      const toast = document.createElement('div');
+      toast.id = 'login-toast';
+      toast.style.cssText = `position:fixed;bottom:28px;right:28px;z-index:9999;
+        background:${type === 'error' ? '#fff0f0' : '#f0fff4'};
+        border:1px solid ${type === 'error' ? '#ff6b6b' : '#2f9e44'};
+        color:${type === 'error' ? '#c92a2a' : '#1a4731'};
+        padding:14px 22px;border-radius:10px;font-size:14px;font-weight:600;
+        box-shadow:0 4px 20px rgba(0,0,0,0.12);
+        display:flex;align-items:center;gap:10px;min-width:260px;`;
+      toast.innerHTML = `<span>${type === 'error' ? '❌' : '✅'}</span> ${msg}`;
+      document.body.appendChild(toast);
+      if (type !== 'loading') setTimeout(() => toast.remove(), 3500);
+    }
+
+    // ── Role selector ────────────────────────────────────────
+    function selectRole(el) {
       document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('selected'));
       el.classList.add('selected');
     }
 
-    function doLogin() {
-      const email = document.getElementById('email-input').value;
-      const pw = document.getElementById('pw-input').value;
-      if (!email || !pw) { showToast('Please enter your credentials', 'error'); return; }
-      showToast('Authenticating…', 'success');
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+    // ── Login ────────────────────────────────────────────────
+    const DEMO_USERS = [
+      { email: 'admin@aidms.com', password: 'admin123', name: 'Admin User', role: 'Administrator', department: 'IT', avatar: 'AU' },
+      { email: 'manager@aidms.com', password: 'manager123', name: 'Dept. Manager', role: 'Department Head', department: 'Operations', avatar: 'DM' },
+      { email: 'staff@aidms.com', password: 'staff123', name: 'Staff Member', role: 'General Staff', department: 'Admin', avatar: 'SM' },
+    ];
+
+    async function doLogin() {
+      const email = document.getElementById('email-input').value.trim();
+      const pw = document.getElementById('pw-input').value.trim();
+
+      if (!email || !pw) {
+        showToast('Please enter your email and password', 'error');
+        return;
+      }
+
+      showToast('Signing in…', 'success');
+
+      // 1. Try backend
+      try {
+        const res = await fetch('http://localhost:3001/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: pw }),
+          signal: AbortSignal.timeout(3000)   // don't wait more than 3s
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem('aidms-user', JSON.stringify(data.user));
+            showToast('Welcome, ' + data.user.name + '!', 'success');
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+            return;
+          } else {
+            showToast(data.message || 'Invalid credentials', 'error');
+            return;
+          }
+        }
+      } catch (e) { /* backend offline – try demo credentials */ }
+
+      // 2. Check demo credentials
+      const found = DEMO_USERS.find(u => u.email === email.toLowerCase() && u.password === pw);
+      if (found) {
+        const user = { email: found.email, name: found.name, role: found.role, department: found.department, avatar: found.avatar };
+        localStorage.setItem('aidms-user', JSON.stringify(user));
+        showToast('Welcome, ' + user.name + '!', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+        return;
+      }
+
+      // 3. Wrong credentials
+      showToast('Wrong email or password. Hint: admin@aidms.com / admin123', 'error');
     }
+
+    // Allow Enter key to login
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
   </script>
 </body>
 

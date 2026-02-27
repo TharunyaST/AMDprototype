@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI — DMS | Smart Search</title>
     <link rel="stylesheet" href="styles.css">
+    <script>(function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();</script>
     <style>
         .search-hero {
             text-align: center;
@@ -30,7 +31,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(10, 32, 64, 0.9);
+            background: var(--sidebar-bg);
             border: 2px solid var(--glass-border);
             border-radius: 16px;
             padding: 14px 20px;
@@ -144,7 +145,7 @@
 
 <body>
     <div class="metro-strip"
-        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#3b5bdb,#2f9e44,#51cf66,#e67700)">
     </div>
     <div class="app-shell" style="padding-top:4px">
         <aside class="sidebar">
@@ -172,10 +173,7 @@
                     </div>
                 </div>
 
-                <a href="index.html" class="btn"
-                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
-                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
-                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+                REPLACED_LOGOUT_TAG Logout</button>
             </div>
         </aside>
         <main class="main-content">
@@ -183,6 +181,8 @@
                 <span class="topbar-title">🔍 Smart Search Engine</span>
                 <div class="topbar-actions">
                     <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️
                     </div>
                 </div>
             </div>
@@ -293,37 +293,54 @@
             document.getElementById('nlp-query').value = q;
             doSearch();
         }
-        function doSearch() {
-            const q = document.getElementById('nlp-query').value;
+        async function doSearch() {
+            const q = document.getElementById('nlp-query').value.trim();
             const tips = document.getElementById('tips-card');
-            if (tips) tips.style.display = q ? 'none' : 'block';
-            const results = performSearch(q);
-            const container = document.getElementById('results-container');
+            if (tips) tips.style.display = 'none';
             const statsEl = document.getElementById('result-stats');
-            if (q) {
-                statsEl.style.display = 'block';
-                const t = Date.now();
-                renderSearchResults(results, container);
-                const elapsed = ((Date.now() - t) + Math.random() * 40 + 120).toFixed(0);
-                statsEl.innerHTML = `<strong>${results.length} documents</strong> found for "<em>${q}</em>" <span class="nlp-chip">✦ NLP processed in ${elapsed}ms</span>`;
-            } else {
-                statsEl.style.display = 'none';
-                container.innerHTML = '';
-            }
+            const container = document.getElementById('results-container');
+            if (!q) { showAllDocs(); return; }
+            statsEl.style.display = 'block';
+            statsEl.innerHTML = '<span style="color:var(--text-muted)">🔍 Searching…</span>';
+            const t = Date.now();
+            const results = await performSearchAPI(q);
+            renderSearchResults(results, container);
+            const elapsed = ((Date.now() - t) + Math.random() * 40 + 120).toFixed(0);
+            statsEl.innerHTML = `<strong>${results.length} documents</strong> found for "<em>${q}</em>" <span class="nlp-chip">✦ NLP processed in ${elapsed}ms</span>`;
         }
+
         function clearSearch() {
             document.getElementById('nlp-query').value = '';
-            document.getElementById('results-container').innerHTML = '';
             document.getElementById('result-stats').style.display = 'none';
             const tips = document.getElementById('tips-card');
             if (tips) tips.style.display = 'block';
+            showAllDocs();
         }
-        // Auto-show all docs on load
+
+        function showAllDocs() {
+            const container = document.getElementById('results-container');
+            const statsEl = document.getElementById('result-stats');
+            const tips = document.getElementById('tips-card');
+            if (tips) tips.style.display = 'none';
+            statsEl.style.display = 'block';
+            statsEl.innerHTML = `<strong>${MOCK_DOCS.length} documents</strong> in repository <span class="nlp-chip">✦ All Departments</span>`;
+            renderSearchResults(MOCK_DOCS, container);
+        }
+
+        // Show all documents immediately on load
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                setQuery('show me all documents');
-            }, 300);
+            setTimeout(showAllDocs, 200);
         });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aidms-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function () { const s = localStorage.getItem('aidms-theme') || 'light'; document.getElementById('themeToggle').textContent = s === 'dark' ? '☀️' : '🌙'; })();
     </script>
 </body>
 

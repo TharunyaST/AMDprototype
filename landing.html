@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,6 +8,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <script>/* no-flash theme init */
+        (function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();
+    </script>
     <style>
         *,
         *::before,
@@ -18,23 +21,37 @@
         }
 
         :root {
-            --teal: #00e5cc;
-            --teal-glow: rgba(0, 229, 204, 0.35);
-            --blue: #003580;
-            --indigo: #0a0f2e;
-            --text: #ffffff;
-            --muted: rgba(255, 255, 255, 0.55);
-            --card-bg: rgba(255, 255, 255, 0.04);
+            --teal: #2f9e44;
+            --teal-glow: rgba(47, 158, 68, 0.2);
+            --blue: #3b5bdb;
+            --text: #212529;
+            --muted: rgba(33, 37, 41, 0.55);
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --border: rgba(0, 0, 0, 0.09);
+        }
+
+        [data-theme="dark"] {
+            --teal: #51cf66;
+            --teal-glow: rgba(81, 207, 102, 0.2);
+            --blue: #4dabf7;
+            --text: #e9ecef;
+            --muted: rgba(233, 236, 239, 0.55);
+            --card-bg: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.08);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #050d1f;
+            background: #f8f9fa;
             color: var(--text);
             overflow: hidden;
             height: 100vh;
             width: 100vw;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: #141618;
         }
 
         /* ── CANVAS ─────────────────────── */
@@ -62,9 +79,13 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(5, 13, 31, 0.75) 100%);
+            background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(238, 242, 255, 0.6) 100%);
             pointer-events: none;
             z-index: 1;
+        }
+
+        [data-theme="dark"] .scene::before {
+            background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(5, 13, 31, 0.75) 100%);
         }
 
         /* ── BADGE ──────────────────────── */
@@ -127,11 +148,17 @@
             font-weight: 800;
             line-height: 1.05;
             letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 45%, #00e5cc 100%);
+            background: linear-gradient(135deg, #1a2340 0%, #00695c 45%, #00897b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-shadow: none;
+        }
+
+        [data-theme="dark"] .headline h1 {
+            background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 45%, #00e5cc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .headline h1 span {
@@ -201,8 +228,9 @@
         .feat-card .label {
             font-size: 12px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.75);
+            color: var(--text);
             line-height: 1.4;
+            opacity: 0.8;
         }
 
         /* ── CTA BUTTON ─────────────────── */
@@ -218,10 +246,10 @@
 
         .btn-primary {
             padding: 15px 40px;
-            background: linear-gradient(135deg, #00e5cc 0%, #0097a7 100%);
+            background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
             border: none;
             border-radius: 999px;
-            color: #001a2c;
+            color: #fff;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 16px;
             font-weight: 700;
@@ -231,6 +259,11 @@
             box-shadow: 0 0 0 0 var(--teal-glow);
             position: relative;
             overflow: hidden;
+        }
+
+        [data-theme="dark"] .btn-primary {
+            background: linear-gradient(135deg, #00e5cc 0%, #0097a7 100%);
+            color: #001a2c;
         }
 
         .btn-primary::after {
@@ -263,9 +296,9 @@
         }
 
         .btn-ghost:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #fff;
-            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--teal);
+            color: var(--teal);
+            background: rgba(0, 137, 123, 0.05);
         }
 
         /* ── STATS STRIP ────────────────── */
@@ -315,20 +348,20 @@
         .logo-icon {
             width: 42px;
             height: 42px;
-            background: linear-gradient(135deg, #00e5cc, #003580);
+            background: linear-gradient(135deg, var(--teal), var(--blue));
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            box-shadow: 0 4px 20px rgba(0, 229, 204, 0.3);
+            box-shadow: 0 4px 20px var(--teal-glow);
         }
 
         .logo-text {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 14px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text);
             line-height: 1.2;
         }
 
@@ -350,6 +383,33 @@
             z-index: 20;
             animation: fadeDown 0.7s ease both;
             animation-delay: 0.1s;
+            align-items: center;
+        }
+
+        /* ── THEME TOGGLE ───────────────── */
+        .theme-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-btn:hover {
+            border-color: var(--teal);
+            transform: scale(1.1);
+        }
+
+        /* stat num color */
+        .stat-num {
+            color: var(--teal);
         }
 
         /* ── KEYFRAMES ──────────────────── */
@@ -421,11 +481,15 @@
         .transition-overlay {
             position: fixed;
             inset: 0;
-            background: #050d1f;
+            background: #eef2ff;
             z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.7s ease;
+        }
+
+        [data-theme="dark"] .transition-overlay {
+            background: #050d1f;
         }
 
         .transition-overlay.active {
@@ -458,6 +522,7 @@
 
     <!-- top-right nav -->
     <div class="nav-corner">
+        <button class="theme-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️</button>
         <button class="btn-ghost" onclick="goLogin()" style="padding:9px 20px;font-size:13px">Sign In</button>
     </div>
 
@@ -506,21 +571,8 @@
         </div>
     </div>
 
-    <!-- stats at bottom -->
-    <div class="stats-strip">
-        <div class="stat">
-            <div class="stat-num" id="s1">0%</div>
-            <div class="stat-lbl">Less Paperwork</div>
-        </div>
-        <div class="stat">
-            <div class="stat-num" id="s2">0</div>
-            <div class="stat-lbl">Departments</div>
-        </div>
-        <div class="stat">
-            <div class="stat-num" id="s3">0K+</div>
-            <div class="stat-lbl">Docs Indexed</div>
-        </div>
-    </div>
+
+
 
     <!-- transition overlay -->
     <div class="transition-overlay" id="overlay"></div>
@@ -693,6 +745,23 @@
                 card.style.boxShadow = '';
             });
         });
+
+        /* ─── Theme Toggle ─── */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aidms-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            // adjust particle bg
+            if (gl) gl.clearColor(isDark ? 0.94 : 0.02, isDark ? 0.97 : 0.05, isDark ? 1.0 : 0.12, 1.0);
+        }
+        // set correct icon on load
+        (function () {
+            const stored = localStorage.getItem('aidms-theme') || 'light';
+            document.getElementById('themeToggle').textContent = stored === 'dark' ? '☀️' : '🌙';
+        })();
 
         /* ─── Navigation ─── */
         function goLogin() {

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI — DMS | Document Repository</title>
     <link rel="stylesheet" href="styles.css">
+    <script>(function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();</script>
     <style>
         .filter-bar {
             display: flex;
@@ -141,7 +142,7 @@
 
 <body>
     <div class="metro-strip"
-        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#3b5bdb,#2f9e44,#51cf66,#e67700)">
     </div>
     <div class="app-shell" style="padding-top:4px">
         <aside class="sidebar">
@@ -169,10 +170,7 @@
                     </div>
                 </div>
 
-                <a href="index.html" class="btn"
-                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
-                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
-                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+                REPLACED_LOGOUT_TAG Logout</button>
             </div>
         </aside>
         <main class="main-content">
@@ -184,6 +182,8 @@
                 <div class="topbar-actions">
                     <a href="upload.html" class="btn btn-primary btn-sm">+ Upload</a>
                     <div class="icon-btn" onclick="window.location='workflow.html'">🔔<div class="badge-dot"></div>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️
                     </div>
                 </div>
             </div>
@@ -394,6 +394,15 @@
         }
 
         renderDocs(DOCS);
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aidms-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function () { const s = localStorage.getItem('aidms-theme') || 'light'; document.getElementById('themeToggle').textContent = s === 'dark' ? '☀️' : '🌙'; })();
     </script>
 </body>
 

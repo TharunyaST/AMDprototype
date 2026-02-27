@@ -1,0 +1,197 @@
+[
+    {
+        "id": "DOC-001",
+        "name": "Safety_Inspection_Q4_2024.pdf",
+        "category": "Safety",
+        "department": "Operations",
+        "size": "2.4 MB",
+        "pages": 18,
+        "uploadedBy": "Rajesh Kumar",
+        "uploadedAt": "2025-01-15T08:32:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": true,
+        "tags": [
+            "safety",
+            "inspection",
+            "quarterly"
+        ],
+        "confidence": 96
+    },
+    {
+        "id": "DOC-002",
+        "name": "Tender_RollingStock_2025.docx",
+        "category": "Procurement",
+        "department": "Procurement",
+        "size": "1.1 MB",
+        "pages": 42,
+        "uploadedBy": "Priya Menon",
+        "uploadedAt": "2025-01-14T14:20:00Z",
+        "status": "pending",
+        "aiClassified": true,
+        "ocr": false,
+        "tags": [
+            "tender",
+            "rolling stock",
+            "2025"
+        ],
+        "confidence": 91
+    },
+    {
+        "id": "DOC-003",
+        "name": "HR_Circular_LeavePolicy.pdf",
+        "category": "HR",
+        "department": "HR",
+        "size": "0.5 MB",
+        "pages": 6,
+        "uploadedBy": "Suresh Nair",
+        "uploadedAt": "2025-01-13T10:00:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": true,
+        "tags": [
+            "HR",
+            "leave",
+            "policy",
+            "circular"
+        ],
+        "confidence": 98
+    },
+    {
+        "id": "DOC-004",
+        "name": "AnnualBudget_Proposal_FY25.xlsx",
+        "category": "Finance",
+        "department": "Finance",
+        "size": "3.2 MB",
+        "pages": 85,
+        "uploadedBy": "Arun Das",
+        "uploadedAt": "2025-01-10T09:15:00Z",
+        "status": "overdue",
+        "aiClassified": true,
+        "ocr": false,
+        "tags": [
+            "budget",
+            "finance",
+            "FY25",
+            "annual"
+        ],
+        "confidence": 89
+    },
+    {
+        "id": "DOC-005",
+        "name": "Station_SOP_Revision_2025.pdf",
+        "category": "Operations",
+        "department": "Operations",
+        "size": "1.8 MB",
+        "pages": 30,
+        "uploadedBy": "Meera Pillai",
+        "uploadedAt": "2025-01-12T11:45:00Z",
+        "status": "review",
+        "aiClassified": true,
+        "ocr": true,
+        "tags": [
+            "SOP",
+            "station",
+            "operations",
+            "2025"
+        ],
+        "confidence": 94
+    },
+    {
+        "id": "DOC-006",
+        "name": "Engineering_Report_Signalling.pdf",
+        "category": "Engineering",
+        "department": "Engineering",
+        "size": "4.1 MB",
+        "pages": 64,
+        "uploadedBy": "Kiran Raj",
+        "uploadedAt": "2025-01-08T07:30:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": true,
+        "tags": [
+            "engineering",
+            "signalling",
+            "report"
+        ],
+        "confidence": 93
+    },
+    {
+        "id": "DOC-007",
+        "name": "Legal_Contract_Maintenance_2025.pdf",
+        "category": "Legal",
+        "department": "Legal",
+        "size": "2.0 MB",
+        "pages": 22,
+        "uploadedBy": "Anitha Roy",
+        "uploadedAt": "2025-01-06T13:10:00Z",
+        "status": "approved",
+        "aiClassified": false,
+        "ocr": true,
+        "tags": [
+            "legal",
+            "contract",
+            "maintenance"
+        ],
+        "confidence": null
+    },
+    {
+        "id": "DOC-008",
+        "name": "IT_Security_Policy_v3.pdf",
+        "category": "IT",
+        "department": "IT",
+        "size": "0.8 MB",
+        "pages": 14,
+        "uploadedBy": "Rajesh Kumar",
+        "uploadedAt": "2025-01-05T16:00:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": false,
+        "tags": [
+            "IT",
+            "security",
+            "policy"
+        ],
+        "confidence": 97
+    },
+    {
+        "id": "DOC-009",
+        "name": "Track_Maintenance_Schedule_Q1.xlsx",
+        "category": "Engineering",
+        "department": "Engineering",
+        "size": "1.5 MB",
+        "pages": 20,
+        "uploadedBy": "Kiran Raj",
+        "uploadedAt": "2025-01-03T08:00:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": false,
+        "tags": [
+            "track",
+            "maintenance",
+            "schedule",
+            "Q1"
+        ],
+        "confidence": 90
+    },
+    {
+        "id": "DOC-010",
+        "name": "Staff_Training_Report_Dec2024.pdf",
+        "category": "HR",
+        "department": "HR",
+        "size": "1.2 MB",
+        "pages": 28,
+        "uploadedBy": "Suresh Nair",
+        "uploadedAt": "2024-12-30T14:00:00Z",
+        "status": "approved",
+        "aiClassified": true,
+        "ocr": true,
+        "tags": [
+            "training",
+            "HR",
+            "staff",
+            "December"
+        ],
+        "confidence": 95
+    }
+]

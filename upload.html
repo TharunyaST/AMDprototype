@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kochi Metro AI-DMS — Upload & OCR</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AI — DMS | Upload &amp; OCR</title>
+    <link rel="stylesheet" href="styles.css">`n    <script>(function(){var t=localStorage.getItem('aidms-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
     <style>
         .ocr-result-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 191, 165, 0.2);
+            background: var(--surface);
+            border: 1px solid rgba(0, 137, 123, 0.2);
             border-radius: 12px;
             padding: 16px;
             margin-top: 14px;
@@ -103,7 +103,7 @@
 
 <body>
     <div class="metro-strip"
-        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#3b5bdb,#2f9e44,#51cf66,#e67700)">
     </div>
     <div class="app-shell" style="padding-top:4px">
         <aside class="sidebar">
@@ -131,17 +131,14 @@
                     </div>
                 </div>
             
-      <a href="index.html" class="btn" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s" onmouseover="this.style.background='rgba(255,82,82,0.2)'" onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+      REPLACED_LOGOUT_TAG Logout</button>
     </div>
   </aside>
         <main class="main-content">
             <div class="topbar">
                 <span class="topbar-title">📤 Upload & AI Processing</span>
                 <div class="topbar-actions">
-                    <div class="icon-btn">🔔<div class="badge-dot"></div>
-                    </div>
-                </div>
-            </div>
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>`n                    </div>`n                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️</div>`n                </div>
             <div class="page-content">
                 <div class="page-header">
                     <h1>Upload & OCR Processing</h1>
@@ -397,7 +394,8 @@ RECOMMENDATIONS:<br>
 Signed: Rajesh Kumar (KMRL Safety Dept.)<br>
 [Signature block detected — OCR confidence: 87%]`;
         }
-    </script>
-</body>
+    function toggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')=='dark',n=d?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('aidms-theme',n);document.getElementById('themeToggle').textContent=n=='dark'?'☀️':'🌙';} (function(){var s=localStorage.getItem('aidms-theme')||'light';document.getElementById('themeToggle').textContent=s=='dark'?'☀️':'🌙';})();</script>`n</body>
 
 </html>
+
+

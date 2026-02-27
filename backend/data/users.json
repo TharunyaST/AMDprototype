@@ -1,0 +1,29 @@
+[
+    {
+        "id": "USR-001",
+        "name": "Rajesh Kumar",
+        "email": "admin@aidms.com",
+        "password": "admin123",
+        "role": "Administrator",
+        "department": "IT",
+        "avatar": "RK"
+    },
+    {
+        "id": "USR-002",
+        "name": "Priya Menon",
+        "email": "manager@aidms.com",
+        "password": "manager123",
+        "role": "Department Head",
+        "department": "Engineering",
+        "avatar": "PM"
+    },
+    {
+        "id": "USR-003",
+        "name": "Arun Das",
+        "email": "staff@aidms.com",
+        "password": "staff123",
+        "role": "General Staff",
+        "department": "Operations",
+        "avatar": "AD"
+    }
+]

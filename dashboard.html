@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI — DMS | Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        (function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();
+    </script>
     <style>
         canvas {
             display: block;
@@ -124,7 +127,7 @@
 
 <body>
     <div class="metro-strip"
-        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#003580,#00bfa5,#00e5cc,#ffd54f)">
+        style="position:fixed;top:0;left:0;right:0;z-index:999;height:4px;background:linear-gradient(90deg,#3b5bdb,#2f9e44,#51cf66,#e67700)">
     </div>
     <div class="app-shell" style="padding-top:4px">
         <!-- SIDEBAR -->
@@ -154,10 +157,7 @@
                     <span style="color:var(--text-muted);font-size:14px">⚙️</span>
                 </div>
 
-                <a href="index.html" class="btn"
-                    style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;text-decoration:none;transition:all .3s"
-                    onmouseover="this.style.background='rgba(255,82,82,0.2)'"
-                    onmouseout="this.style.background='rgba(255,82,82,0.1)'"> Logout</a>
+                <button onclick="logout()" class="btn" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;margin-top:8px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.25);border-radius:10px;color:#ff5252;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s" onmouseover="this.style.background=chr(39)rgba(255,82,82,0.2)chr(39)" onmouseout="this.style.background=chr(39)rgba(255,82,82,0.1)chr(39)"> Logout</button>
             </div>
         </aside>
 
@@ -172,8 +172,11 @@
                 <div class="topbar-actions">
                     <div class="icon-btn" onclick="window.location='workflow.html'">🔔<div class="badge-dot"></div>
                     </div>
-                    <div class="icon-btn">☀️</div>
-                    <div class="icon-btn" onclick="window.location='index.html'">🚪</div>
+                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️
+                    </div>
+                    <span id="backend-status" title="Checking backend…"
+                        style="width:8px;height:8px;border-radius:50%;background:var(--text-muted);display:inline-block;margin:0 4px"></span>
+                    <div class="icon-btn" onclick="logout()">🚶</div>
                 </div>
             </div>
             <div class="page-content">
@@ -190,32 +193,32 @@
                 <div class="stat-grid">
                     <div class="stat-card">
                         <div class="stat-label">Total Documents</div>
-                        <div class="stat-value text-teal" data-count="52480">0</div>
+                        <div class="stat-value text-teal" id="stat-total-docs" data-count="52480">0</div>
                         <div class="stat-delta up">↑ 340 this week</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">AI Classified Today</div>
-                        <div class="stat-value" data-count="847">0</div>
+                        <div class="stat-value" id="stat-ai" data-count="847">0</div>
                         <div class="stat-delta up">↑ 92% accuracy</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Pending Approvals</div>
-                        <div class="stat-value text-warning" data-count="5">0</div>
+                        <div class="stat-value text-warning" id="stat-pending" data-count="5">0</div>
                         <div class="stat-delta down">▼ 3 overdue</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">OCR Processed</div>
-                        <div class="stat-value" data-count="3210">0</div>
+                        <div class="stat-value" id="stat-ocr" data-count="3210">0</div>
                         <div class="stat-delta up">↑ 156 today</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Active Users</div>
-                        <div class="stat-value text-success" data-count="38">0</div>
+                        <div class="stat-value text-success" id="stat-users" data-count="38">0</div>
                         <div class="stat-delta up">↑ Online now</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Storage Used</div>
-                        <div class="stat-value" data-suffix=" GB" data-count="246">0</div>
+                        <div class="stat-value" id="stat-storage" data-suffix=" GB" data-count="246">0</div>
                         <div class="stat-delta">of 1 TB allocated</div>
                     </div>
                 </div>
@@ -462,6 +465,20 @@
         </main>
     </div>
     <script src="app.js"></script>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aidms-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function () {
+            const stored = localStorage.getItem('aidms-theme') || 'light';
+            document.getElementById('themeToggle').textContent = stored === 'dark' ? '☀️' : '🌙';
+        })();
+    </script>
 </body>
 
 </html>
