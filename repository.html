@@ -170,7 +170,8 @@
                     </div>
                 </div>
 
-                REPLACED_LOGOUT_TAG Logout</button>
+                <button onclick="window.location.href='index.html'" class="btn btn-danger"
+                    style="width:100%;justify-content:center;margin-top:12px">🚪 Logout</button>
             </div>
         </aside>
         <main class="main-content">
@@ -310,11 +311,14 @@
             { name: 'Public_Comm_Press_Release.docx', dept: 'Customer Service', type: 'docx', size: '380 KB', date: '2025-02-14', author: 'Thomas George', tags: ['press', 'communication'], ai: 'Press Release' },
             { name: 'Scanned_Invoice_Vendor_2025.png', dept: 'Finance', type: 'img', size: '5.2 MB', date: '2025-02-18', author: 'Suresh Pillai', tags: ['invoice', 'vendor', 'OCR'], ai: 'Financial Invoice' },
         ];
+        let REPO_DOCS = [...DOCS];
 
         const typeIcons = { pdf: '📄', docx: '📝', xlsx: '📊', img: '🖼️' };
         const typeColors = { pdf: 'pdf', docx: 'docx', xlsx: 'xlsx', img: 'img' };
 
+        let currentViewDocs = [];
         function renderDocs(docs) {
+            currentViewDocs = docs;
             const grid = document.getElementById('doc-grid');
             grid.innerHTML = '';
             docs.forEach((doc, i) => {
@@ -329,8 +333,8 @@
       <div class="ai-badge" style="margin-top:4px">✦ ${doc.ai}</div>
       <div class="doc-tags">${doc.tags.map(t => `<span class="chip" style="font-size:9px;padding:2px 6px">${t}</span>`).join('')}</div>
       <div class="doc-actions">
-        <button onclick="previewDoc('${doc.name}','${doc.dept}','${doc.author}','${doc.ai}','${doc.date}','${doc.type}')">👁 View</button>
-        <button>⬇ Download</button>
+        <button onclick="previewDoc('${doc.name}','${doc.dept}','${doc.author}','${doc.ai}','${doc.date}','${doc.type}', ${i})">👁 View</button>
+        <button onclick="downloadRepoDoc(${i})">⬇ Download</button>
         <button onclick="showToast('Share link copied!')">🔗 Share</button>
       </div>`;
                 grid.appendChild(card);
@@ -341,7 +345,7 @@
             const q = document.getElementById('repo-search').value.toLowerCase();
             const dept = document.getElementById('dept-filter').value;
             const type = document.getElementById('type-filter').value.toLowerCase();
-            const filtered = DOCS.filter(d => {
+            const filtered = REPO_DOCS.filter(d => {
                 const matchQ = !q || d.name.toLowerCase().includes(q) || d.tags.some(t => t.includes(q)) || d.dept.toLowerCase().includes(q);
                 const matchDept = !dept || d.dept === dept;
                 const matchType = !type || d.type === type.toLowerCase();
@@ -366,7 +370,7 @@
             }
         }
 
-        function previewDoc(name, dept, author, ai, date, type) {
+        function previewDoc(name, dept, author, ai, date, type, idx) {
             document.getElementById('preview-title').textContent = name;
             document.getElementById('preview-body').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px">
@@ -385,7 +389,7 @@
         [Full text content would display here after OCR processing...]
       </div>
       <div style="display:flex;gap:10px;margin-top:4px">
-        <button class="btn btn-primary" onclick="showToast('Download started')">⬇ Download</button>
+        <button class="btn btn-primary" onclick="downloadRepoDoc(${idx}); closeModal('preview-modal')">⬇ Download</button>
         <button class="btn btn-secondary" onclick="showToast('Share link copied!')">🔗 Share</button>
         <button class="btn btn-danger btn-sm" onclick="closeModal('preview-modal')">✕ Close</button>
       </div>
@@ -393,7 +397,81 @@
             openModal('preview-modal');
         }
 
-        renderDocs(DOCS);
+        function downloadRepoDoc(idx) {
+            const doc = currentViewDocs[idx];
+            if (!doc) return;
+
+            if (doc.fileUrl) {
+                const a = document.createElement('a');
+                a.href = API_BASE + doc.fileUrl;
+                a.setAttribute('download', doc.name);
+                a.click();
+                showToast(`Downloading: ${doc.name}`);
+                return;
+            }
+
+            const content = [
+                '='.repeat(60),
+                `AI-DMS DOCUMENT`,
+                '='.repeat(60),
+                '',
+                `Title       : ${doc.name}`,
+                `Department  : ${doc.dept}`,
+                `Author      : ${doc.author}`,
+                `Date        : ${doc.date}`,
+                `File Type   : ${doc.type.toUpperCase()}`,
+                `Size        : ${doc.size || 'N/A'}`,
+                `Tags        : ${doc.tags.join(', ')}`,
+                `AI Label    : ${doc.ai}`,
+                '',
+                '-'.repeat(60),
+                'CONTENT PREVIEW',
+                '-'.repeat(60),
+                '',
+                `This document (${doc.name}) is currently securely stored in the AI-DMS repository.`,
+                `It has been classified by AI as a "${doc.ai}" document for the ${doc.dept} department.`,
+                '',
+                '='.repeat(60),
+                `Downloaded from AI-DMS on ${new Date().toLocaleDateString()}`,
+                '='.repeat(60),
+            ].join('\\n');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = doc.name.replace(/[^a-z0-9]/gi, '_') + '.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`Downloaded: ${doc.name}`);
+        }
+
+        async function initRepo() {
+            try {
+                const result = await api.get('/api/documents');
+                if (result && result.success && result.documents.length) {
+                    const apiDocs = result.documents.map(d => ({
+                        name: d.name,
+                        dept: d.department,
+                        type: d.name.split('.').pop().toLowerCase() || 'pdf',
+                        size: d.size || '1.0 MB',
+                        date: (d.uploadedAt || '').substring(0, 10),
+                        author: d.uploadedBy || 'Unknown',
+                        tags: d.tags || [],
+                        ai: d.category || 'Uncategorized',
+                        fileUrl: d.fileUrl
+                    }));
+                    REPO_DOCS = apiDocs;
+
+                    document.querySelector('[data-count="52480"]').textContent = REPO_DOCS.length;
+                    document.querySelector('[data-count="51200"]').textContent = REPO_DOCS.length;
+                }
+            } catch (e) {
+                console.error("Failed to load repo docs", e);
+            }
+            renderDocs(REPO_DOCS);
+        }
+
+        initRepo();
         function toggleTheme() {
             const html = document.documentElement;
             const isDark = html.getAttribute('data-theme') === 'dark';

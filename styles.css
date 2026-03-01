@@ -339,7 +339,7 @@ body {
 
 .topbar-search:focus-within {
   border-color: var(--metro-blue);
-  box-shadow: 0 0 0 3px rgba(59,91,219,0.10);
+  box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.10);
 }
 
 .topbar-search input {
@@ -378,7 +378,7 @@ body {
 }
 
 .icon-btn:hover {
-  background: rgba(59,91,219,0.10);
+  background: rgba(59, 91, 219, 0.10);
   color: var(--metro-blue);
   border-color: var(--metro-blue);
 }
@@ -433,7 +433,7 @@ body {
 
 .card:hover {
   box-shadow: var(--shadow-hover);
-  border-color: rgba(59,91,219,0.15);
+  border-color: rgba(59, 91, 219, 0.15);
 }
 
 .card-header {
@@ -549,7 +549,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59,91,219,0.25);
+  box-shadow: 0 8px 24px rgba(59, 91, 219, 0.25);
 }
 
 .btn-secondary {
@@ -559,7 +559,7 @@ body {
 }
 
 .btn-secondary:hover {
-  background: rgba(59,91,219,0.07);
+  background: rgba(59, 91, 219, 0.07);
   border-color: var(--metro-blue);
 }
 
@@ -595,9 +595,9 @@ body {
 }
 
 .badge-teal {
-  background: rgba(47,158,68,0.10);
+  background: rgba(47, 158, 68, 0.10);
   color: var(--metro-teal);
-  border: 1px solid rgba(47,158,68,0.25);
+  border: 1px solid rgba(47, 158, 68, 0.25);
 }
 
 .badge-gold {
@@ -607,9 +607,9 @@ body {
 }
 
 .badge-green {
-  background: rgba(47,158,68,0.10);
+  background: rgba(47, 158, 68, 0.10);
   color: var(--success);
-  border: 1px solid rgba(47,158,68,0.25);
+  border: 1px solid rgba(47, 158, 68, 0.25);
 }
 
 .badge-orange {
@@ -659,7 +659,7 @@ tbody td {
 }
 
 tbody tr:hover {
-  background: rgba(59,91,219,0.05);
+  background: rgba(59, 91, 219, 0.05);
 }
 
 tbody tr:last-child td {
@@ -700,7 +700,7 @@ tbody tr:last-child td {
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--metro-blue);
-  box-shadow: 0 0 0 3px rgba(59,91,219,0.10);
+  box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.10);
 }
 
 .form-input::placeholder,
@@ -735,19 +735,44 @@ tbody tr:last-child td {
 }
 
 /* ─── UPLOAD ZONE ────────────────────────────────────────── */
+.upload-layout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.upload-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .upload-grid-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .upload-zone {
   border: 2px dashed var(--glass-border);
   border-radius: var(--radius);
-  padding: 48px;
+  padding: 48px 24px;
   text-align: center;
   cursor: pointer;
   transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 350px;
 }
 
 .upload-zone:hover,
 .upload-zone.dragover {
   border-color: var(--metro-blue);
-  background: rgba(59,91,219,0.05);
+  background: rgba(59, 91, 219, 0.05);
 }
 
 .upload-icon {
@@ -763,6 +788,18 @@ tbody tr:last-child td {
 .upload-zone p {
   font-size: 13px;
   color: var(--text-muted);
+}
+
+.ai-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: var(--text-muted);
+  text-align: center;
+  min-height: 250px;
 }
 
 /* ─── TIMELINE ───────────────────────────────────────────── */
@@ -993,9 +1030,9 @@ tbody tr:last-child td {
   border-radius: 20px;
   font-size: 10px;
   font-weight: 600;
-  background: rgba(59,91,219,0.07);
+  background: rgba(59, 91, 219, 0.07);
   color: var(--metro-teal);
-  border: 1px solid rgba(59,91,219,0.15);
+  border: 1px solid rgba(59, 91, 219, 0.15);
   margin: 2px;
 }
 
@@ -1031,7 +1068,7 @@ tbody tr:last-child td {
 
 .search-result-item:hover {
   border-color: var(--metro-blue);
-  background: rgba(59,91,219,0.04);
+  background: rgba(59, 91, 219, 0.04);
 }
 
 .result-title {
@@ -1200,8 +1237,8 @@ tbody tr:last-child td {
   align-items: center;
   gap: 5px;
   padding: 3px 10px;
-  background: linear-gradient(135deg, rgba(59,91,219,0.10), rgba(26, 115, 232, 0.15));
-  border: 1px solid rgba(59,91,219,0.25);
+  background: linear-gradient(135deg, rgba(59, 91, 219, 0.10), rgba(26, 115, 232, 0.15));
+  border: 1px solid rgba(59, 91, 219, 0.25);
   border-radius: 20px;
   font-size: 10px;
   font-weight: 700;
@@ -1334,7 +1371,7 @@ tbody tr:last-child td {
 }
 
 .toggle-switch.on {
-  background: rgba(47,158,68,0.25);
+  background: rgba(47, 158, 68, 0.25);
   border-color: var(--metro-blue);
 }
 
@@ -1389,13 +1426,13 @@ tbody tr:last-child td {
 
 .flow-step.done .flow-step-icon {
   border-color: var(--success);
-  background: rgba(59,91,219,0.07);
+  background: rgba(59, 91, 219, 0.07);
 }
 
 .flow-step.active .flow-step-icon {
   border-color: var(--metro-blue);
-  background: rgba(47,158,68,0.10);
-  box-shadow: 0 0 16px rgba(59,91,219,0.15);
+  background: rgba(47, 158, 68, 0.10);
+  box-shadow: 0 0 16px rgba(59, 91, 219, 0.15);
 }
 
 .flow-step.pending .flow-step-icon {

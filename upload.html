@@ -1,11 +1,13 @@
 ﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI — DMS | Upload &amp; OCR</title>
-    <link rel="stylesheet" href="styles.css">`n    <script>(function(){var t=localStorage.getItem('aidms-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+    <link rel="stylesheet" href="styles.css">
+    <script>(function () { var t = localStorage.getItem('aidms-theme') || 'light'; document.documentElement.setAttribute('data-theme', t); })();</script>
     <style>
         .ocr-result-card {
             background: var(--surface);
@@ -130,170 +132,174 @@
                         <div class="user-role">Dept. Head · Safety</div>
                     </div>
                 </div>
-            
-      REPLACED_LOGOUT_TAG Logout</button>
-    </div>
-  </aside>
+
+                <button onclick="window.location.href='index.html'" class="btn btn-danger"
+                    style="width:100%;justify-content:center;margin-top:12px">🚪 Logout</button>
+            </div>
+        </aside>
+        <!-- MAIN -->
         <main class="main-content">
             <div class="topbar">
                 <span class="topbar-title">📤 Upload & AI Processing</span>
                 <div class="topbar-actions">
-                    <div class="icon-btn">🔔<div class="badge-dot"></div>`n                    </div>`n                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️</div>`n                </div>
+                    <div class="icon-btn">🔔<div class="badge-dot"></div>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️
+                    </div>
+                </div>
+            </div>
+
             <div class="page-content">
-                <div class="page-header">
-                    <h1>Upload & OCR Processing</h1>
-                    <p>Upload documents for AI classification, auto-tagging, and OCR text extraction</p>
-                </div>
-
-                <!-- Step Indicator -->
-                <div class="step-indicator">
-                    <div class="step active" id="s1">1️⃣ Upload File</div>
-                    <div class="step-arrow">→</div>
-                    <div class="step" id="s2">2️⃣ OCR Extraction</div>
-                    <div class="step-arrow">→</div>
-                    <div class="step" id="s3">✦ AI Classification</div>
-                    <div class="step-arrow">→</div>
-                    <div class="step" id="s4">🏷️ Auto-Tagging</div>
-                    <div class="step-arrow">→</div>
-                    <div class="step" id="s5">✅ Index & Store</div>
-                </div>
-
-                <div class="grid-2">
-                    <!-- Upload Area -->
-                    <div>
-                        <div class="card mb-24">
-                            <div class="card-header">
-                                <div class="card-title">Drop Zone</div>
-                                <div class="ai-badge">AI-Powered</div>
-                            </div>
-                            <div class="upload-zone" id="drop-zone">
-                                <div class="upload-icon">📤</div>
-                                <h3>Drop files here or click to browse</h3>
-                                <p>Supports PDF, DOCX, XLSX, PNG, JPG, TIFF (max 50MB)</p>
-                                <div style="margin-top:16px" id="demo-trigger">
-                                    <button class="btn btn-primary" onclick="simulateDemoUpload()">⚡ Demo: Upload Sample
-                                        Document</button>
-                                </div>
-                            </div>
-                            <div id="upload-progress" style="display:none;margin-top:16px">
-                                <div class="card-title mb-16" style="margin-bottom:10px">Processing Queue</div>
-                                <div class="upload-items notif-list"></div>
-                            </div>
-                        </div>
-
-                        <!-- Metadata Form -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Document Metadata</div>
-                                <span class="badge badge-teal">Optional Override</span>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Document Title</label>
-                                <input class="form-input" placeholder="Auto-detected by AI…" id="doc-title">
-                            </div>
-                            <div class="grid-2">
-                                <div class="form-group">
-                                    <label class="form-label">Department</label>
-                                    <select class="form-select">
-                                        <option>Auto-detected ✦</option>
-                                        <option>Operations</option>
-                                        <option>Engineering</option>
-                                        <option>Finance</option>
-                                        <option>Safety</option>
-                                        <option>HR</option>
-                                        <option>Procurement</option>
-                                        <option>Legal</option>
-                                        <option>IT</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Document Type</label>
-                                    <select class="form-select">
-                                        <option>Auto-classified ✦</option>
-                                        <option>Report</option>
-                                        <option>SOP</option>
-                                        <option>Policy</option>
-                                        <option>Tender</option>
-                                        <option>Contract</option>
-                                        <option>Invoice</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Sensitivity Level</label>
-                                <select class="form-select">
-                                    <option>🟢 Public</option>
-                                    <option>🟡 Internal</option>
-                                    <option>🟠 Confidential</option>
-                                    <option>🔴 Restricted</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Notes / Description</label>
-                                <textarea class="form-textarea"
-                                    placeholder="Add context for AI classification…"></textarea>
-                            </div>
-                            <button class="btn btn-secondary" onclick="showToast('Metadata saved!')">💾 Save
-                                Metadata</button>
-                        </div>
+                <div class="upload-layout-container">
+                    <div class="page-header" style="text-align: center; margin-bottom: 32px;">
+                        <h1>Upload & OCR Processing</h1>
+                        <p>Upload documents for AI classification, auto-tagging, and OCR text extraction</p>
                     </div>
 
-                    <!-- AI Results Panel -->
-                    <div>
-                        <div class="card mb-24" id="ai-result-panel">
-                            <div class="card-header">
-                                <div class="card-title">✦ AI Analysis Results</div>
-                                <span class="badge badge-green" id="ai-status-badge">Waiting…</span>
+                    <!-- Step Indicator -->
+                    <div class="step-indicator" style="justify-content: center; margin-bottom: 40px;">
+                        <div class="step active" id="s1">1️⃣ Upload File</div>
+                        <div class="step-arrow">→</div>
+                        <div class="step" id="s2">2️⃣ OCR</div>
+                        <div class="step-arrow">→</div>
+                        <div class="step" id="s3">✦ Classification</div>
+                        <div class="step-arrow">→</div>
+                        <div class="step" id="s4">🏷️ Tagging</div>
+                        <div class="step-arrow">→</div>
+                        <div class="step" id="s5">✅ Store</div>
+                    </div>
+
+                    <div class="upload-grid-row">
+                        <!-- Left Column (Upload Area) -->
+                        <div style="display: flex; flex-direction: column; gap: 24px;">
+                            <div class="card" style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
+                                <div class="card-header">
+                                    <div class="card-title">Drop Zone</div>
+                                    <div class="ai-badge">AI-Powered</div>
+                                </div>
+                                <div class="upload-zone" id="drop-zone" style="flex: 1;">
+                                    <div class="upload-icon">📤</div>
+                                    <h3>Drop files here or click to browse</h3>
+                                    <p>Supports PDF, DOCX, XLSX, PNG, JPG, TIFF (max 50MB)</p>
+                                    <div style="margin-top:16px" id="demo-trigger">
+                                        <button class="btn btn-primary" onclick="simulateDemoUpload()">⚡ Demo: Upload
+                                            Sample Document</button>
+                                    </div>
+                                </div>
+
+                                <div id="upload-progress" style="display:none;margin-top:16px">
+                                    <div class="card-title mb-16" style="margin-bottom:10px">Processing Queue</div>
+                                    <div class="upload-items notif-list"></div>
+                                </div>
                             </div>
-                            <div id="ai-result-content">
-                                <div style="text-align:center;padding:40px;color:var(--text-muted)">
+
+                            <!-- Optional: Metadata Override (Collapsible/Hidden by default to save space) -->
+                            <div class="card" style="padding: 20px;">
+                                <div class="card-header" style="margin-bottom: 0; cursor: pointer;"
+                                    onclick="document.getElementById('meta-form').style.display = document.getElementById('meta-form').style.display === 'none' ? 'block' : 'none'">
+                                    <div class="card-title">Document Metadata Override ▼</div>
+                                </div>
+                                <div id="meta-form" style="display: none; margin-top: 16px;">
+                                    <div class="grid-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Department</label>
+                                            <select class="form-select">
+                                                <option>Auto-detected ✦</option>
+                                                <option>Operations</option>
+                                                <option>Engineering</option>
+                                                <option>Finance</option>
+                                                <option>Safety</option>
+                                                <option>HR</option>
+                                                <option>Procurement</option>
+                                                <option>Legal</option>
+                                                <option>IT</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Document Type</label>
+                                            <select class="form-select">
+                                                <option>Auto-classified ✦</option>
+                                                <option>Report</option>
+                                                <option>SOP</option>
+                                                <option>Policy</option>
+                                                <option>Tender</option>
+                                                <option>Contract</option>
+                                                <option>Invoice</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Sensitivity</label>
+                                        <select class="form-select">
+                                            <option>🟢 Public</option>
+                                            <option>🟡 Internal</option>
+                                            <option>🟠 Confidential</option>
+                                            <option>🔴 Restricted</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (AI Results) -->
+                        <div style="display: flex; flex-direction: column; gap: 24px;">
+                            <div class="card" id="ai-result-panel"
+                                style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
+                                <div class="card-header">
+                                    <div class="card-title">✦ AI Analysis Results</div>
+                                    <span class="badge badge-green" id="ai-status-badge">Waiting…</span>
+                                </div>
+                                <div id="ai-result-content" class="ai-empty-state">
                                     <div style="font-size:40px;margin-bottom:10px">🤖</div>
                                     <p>Upload a document to see AI classification results</p>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- OCR Preview -->
-                        <div class="card mb-24" id="ocr-panel-card">
-                            <div class="card-header">
-                                <div class="card-title">🔍 OCR Extracted Text</div>
-                                <span class="badge badge-blue" id="ocr-badge">Pending</span>
+                            <!-- OCR Preview -->
+                            <div class="card" id="ocr-panel-card" style="padding: 20px;">
+                                <div class="card-header">
+                                    <div class="card-title">🔍 OCR Extracted Text</div>
+                                    <span class="badge badge-blue" id="ocr-badge">Pending</span>
+                                </div>
+                                <div id="ocr-content" class="ocr-panel">
+                                    Waiting for document upload to begin OCR processing…
+                                </div>
+                                <div style="display:flex;gap:8px;margin-top:12px">
+                                    <button class="btn btn-secondary btn-sm" onclick="showToast('OCR text copied!')">📋
+                                        Copy
+                                        Text</button>
+                                    <button class="btn btn-secondary btn-sm"
+                                        onclick="showToast('Text file downloaded!')">⬇
+                                        Export .txt</button>
+                                </div>
                             </div>
-                            <div id="ocr-content" class="ocr-panel">
-                                Waiting for document upload to begin OCR processing…
-                            </div>
-                            <div style="display:flex;gap:8px;margin-top:12px">
-                                <button class="btn btn-secondary btn-sm" onclick="showToast('OCR text copied!')">📋 Copy
-                                    Text</button>
-                                <button class="btn btn-secondary btn-sm" onclick="showToast('Text file downloaded!')">⬇
-                                    Export .txt</button>
-                            </div>
-                        </div>
 
-                        <!-- Batch Upload -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">📦 Batch Upload</div>
-                            </div>
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Process entire
-                                folders of scanned documents at once — up to 500 files per batch.</div>
-                            <div style="display:flex;flex-direction:column;gap:10px">
-                                <div style="display:flex;justify-content:space-between;font-size:12px">
-                                    <span class="text-muted">Daily Batch Quota</span>
-                                    <span class="text-teal">2,847 / 5,000 files</span>
+                            <!-- Batch Upload -->
+                            <div class="card" style="padding: 20px;">
+                                <div class="card-header">
+                                    <div class="card-title">📦 Batch Upload</div>
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width:57%"></div>
+                                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Process
+                                    entire
+                                    folders of scanned documents at once — up to 500 files per batch.</div>
+                                <div style="display:flex;flex-direction:column;gap:10px">
+                                    <div style="display:flex;justify-content:space-between;font-size:12px">
+                                        <span class="text-muted">Daily Batch Quota</span>
+                                        <span class="text-teal">2,847 / 5,000 files</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width:57%"></div>
+                                    </div>
+                                    <button class="btn btn-primary"
+                                        onclick="showToast('Batch job submitted to queue!')">📤
+                                        Start Batch Job</button>
+                                    <button class="btn btn-secondary" onclick="showToast('Batch scheduler opened')">⏰
+                                        Schedule Batch</button>
                                 </div>
-                                <button class="btn btn-primary" onclick="showToast('Batch job submitted to queue!')">📤
-                                    Start Batch Job</button>
-                                <button class="btn btn-secondary" onclick="showToast('Batch scheduler opened')">⏰
-                                    Schedule Batch</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </main>
     </div>
     <script src="app.js"></script>
@@ -394,8 +400,16 @@ RECOMMENDATIONS:<br>
 Signed: Rajesh Kumar (KMRL Safety Dept.)<br>
 [Signature block detected — OCR confidence: 87%]`;
         }
-    function toggleTheme(){var h=document.documentElement,d=h.getAttribute('data-theme')=='dark',n=d?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('aidms-theme',n);document.getElementById('themeToggle').textContent=n=='dark'?'☀️':'🌙';} (function(){var s=localStorage.getItem('aidms-theme')||'light';document.getElementById('themeToggle').textContent=s=='dark'?'☀️':'🌙';})();</script>`n</body>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aidms-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+        (function () { const s = localStorage.getItem('aidms-theme') || 'light'; document.getElementById('themeToggle').textContent = s === 'dark' ? '☀️' : '🌙'; })();
+    </script>
+</body>
 
 </html>
-
-

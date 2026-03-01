@@ -22,6 +22,15 @@ const api = {
       return await r.json();
     } catch { return null; }
   },
+  async postForm(path, formData) {
+    try {
+      const r = await fetch(API_BASE + path, {
+        method: 'POST',
+        body: formData // Content-Type omitted so browser sets boundary automatically
+      });
+      return await r.json();
+    } catch { return null; }
+  },
   async patch(path, body) {
     try {
       const r = await fetch(API_BASE + path, {
@@ -221,7 +230,7 @@ async function performSearchAPI(query) {
     return result.documents.map(d => ({
       title: d.name, dept: d.department, type: d.name.split('.').pop().toUpperCase(),
       tags: d.tags || [], relevance: d.confidence || 80, date: (d.uploadedAt || '').substring(0, 10),
-      author: d.uploadedBy || ''
+      author: d.uploadedBy || '', fileUrl: d.fileUrl
     }));
   }
   return performSearch(query); // fallback
@@ -354,15 +363,16 @@ function simulateUpload(item, file) {
       if (bar) bar.style.background = 'var(--success)';
       // POST to backend
       const user = getLoggedInUser();
-      await api.post('/api/documents', {
-        name: file.name,
-        category: 'Uncategorized',
-        department: user?.department || 'General',
-        size: `${(file.size / 1048576).toFixed(1)} MB`,
-        uploadedBy: user?.name || 'Unknown',
-        aiClassified: true, ocr: true, tags: [],
-        confidence: Math.floor(Math.random() * 10 + 88)
-      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('department', user?.department || 'General');
+      formData.append('uploadedBy', user?.name || 'Unknown');
+      formData.append('category', 'Uncategorized');
+      formData.append('confidence', Math.floor(Math.random() * 10 + 88));
+      formData.append('tags', JSON.stringify([]));
+
+      await api.postForm('/api/documents', formData);
       showToast(`${file.name} uploaded & indexed`);
     }
   }, 200);
@@ -553,6 +563,19 @@ function previewDoc(idx) {
 function downloadDoc(idx) {
   const doc = _lastResults[idx];
   if (!doc) return;
+
+  // Real file download if available
+  if (doc.fileUrl) {
+    const a = document.createElement('a');
+    a.href = API_BASE + doc.fileUrl; // http://localhost:3001/uploads/...
+    // Try to force download instead of opening in tab
+    a.setAttribute('download', doc.title);
+    a.click();
+    showToast(`Downloading: ${doc.title}`);
+    return;
+  }
+
+  // Fallback to text file generation for mock docs
   const content = [
     '='.repeat(60),
     `AI-DMS DOCUMENT`,

@@ -1,15 +1,14 @@
-const mysql = require('mysql2/promise');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || 'qwertyuiop#71118',
-    database: process.env.DB_NAME || 'aidms',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("✅ MongoDB Atlas Connected Successfully");
+    } catch (error) {
+        console.error("❌ MongoDB connection error:", error.message);
+        process.exit(1);
+    }
+};
 
-module.exports = pool;
+module.exports = connectDB;

@@ -383,10 +383,39 @@
     };
 
     function enterAs(role) {
-      const user = ROLES[role];
-      if (!user) return;
-      localStorage.setItem('aidms-user', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
+      const userDetails = ROLES[role];
+      if (!userDetails) return;
+
+      const email = userDetails.email;
+      const pw = 'password123'; // Seed password for all demo accounts
+
+      let toastMsg = document.createElement('div');
+      toastMsg.id = 'temp-toast';
+      toastMsg.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:9999;background:#f0fff4;border:1px solid #2f9e44;color:#1a4731;padding:14px 22px;border-radius:10px;font-size:14px;font-weight:600;';
+      toastMsg.innerHTML = 'Signing in...';
+      document.body.appendChild(toastMsg);
+
+      fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pw })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('temp-toast')?.remove();
+          if (data.success) {
+            localStorage.setItem('aidms-user', JSON.stringify(data.user));
+            window.location.href = 'dashboard.html';
+          } else {
+            alert('Login Failed: ' + data.message);
+          }
+        })
+        .catch(err => {
+          console.error('Backend connection failed:', err);
+          // Fallback for demo if backend is offline
+          localStorage.setItem('aidms-user', JSON.stringify(userDetails));
+          window.location.href = 'dashboard.html';
+        });
     }
 
 
